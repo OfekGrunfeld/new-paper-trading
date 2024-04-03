@@ -1,0 +1,5 @@
+wtforms[email]
+flask-wtf
+
+flask_bcrypt
+itsdangerous == 2.12

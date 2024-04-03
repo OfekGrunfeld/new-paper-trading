@@ -1,2 +1,3 @@
-__all__ = ["render_readme"]
+__all__ = ["render_readme", "logger_script"]
 from . import *
+from .logger_script import logger
