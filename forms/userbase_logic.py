@@ -1,15 +1,23 @@
+from enum import Enum
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import Length, Email, DataRequired
 
+class DefaultFormValidators:
+    email = [DataRequired(), Email(),Length(min=6, max=64)]
+    username = [DataRequired(), Length(min=2, max=25)]
+    password = [DataRequired(), Length(min=5, max=64)]
+
 class SignUpForm(FlaskForm):
-    email = StringField(label="email", validators=[DataRequired(), Email(),Length(min=6, max=64)])
-    username = StringField(label="username", validators=[DataRequired(), Length(min=2, max=25)])
-    password = PasswordField(label="password", validators=[DataRequired(), Length(min=5, max=64)])
-    repeat_password = PasswordField(label="repated_password", validators=[DataRequired(), Length(min=5, max=64)])
+    email = StringField('Email', validators=DefaultFormValidators.email)
+    username = StringField('Username', validators=DefaultFormValidators.username)
+    password = PasswordField('Password', validators=DefaultFormValidators.password)
+    repeat_password = PasswordField(label="repated_password", validators=DefaultFormValidators.password)
+
 
 class LoginForm(FlaskForm):
-    email = StringField("email", validators=[Email()])
-    password = PasswordField("password", validators=[Length(min=5)])
+    username = StringField('Username', validators=DefaultFormValidators.username)
+    password = PasswordField('Password', validators=DefaultFormValidators.password)
 
 
