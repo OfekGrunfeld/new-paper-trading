@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container theme-showcase" role="main" style="margin-top: 75px">
-    <form action="{{ url_for('log_in') }}" method="POST">
+    <form action="{{ url_for('sign_in') }}" method="POST">
         {{ form.hidden_tag() }}
         {{ wtf.form_field(form.username) }}
         {{ wtf.form_field(form.password) }}

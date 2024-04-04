@@ -24,10 +24,10 @@ def get_sign_up_response(email: str, username: str, password: str) -> Union[requ
         return {"internal_error": error}
     
 
-def get_log_in_response(username: str, password: str):
+def get_sign_in_response(username: str, password: str):
     try:
         response: requests.Response = requests.post(
-            url=f"{SERVER_URL}/log_in",
+            url=f"{SERVER_URL}/sign_in",
             params={"username": username, "password": password},
             verify=False,
             timeout=5

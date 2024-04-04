@@ -16,7 +16,7 @@ class SignUpForm(FlaskForm):
     repeat_password = PasswordField(label="repated_password", validators=DefaultFormValidators.password)
 
 
-class LoginForm(FlaskForm):
+class SignInForm(FlaskForm):
     username = StringField('Username', validators=DefaultFormValidators.username)
     password = PasswordField('Password', validators=DefaultFormValidators.password)
 

@@ -5,7 +5,6 @@
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto">
         <li class="nav-item dropdown">
@@ -21,6 +20,11 @@
         </li>
       </ul>
       <ul class="navbar-nav">
+        {% if session.username %}
+        <li class="nav-item">
+          <p>Username: {{ session.username }}</p>
+        </li>
+        {% endif %}
         <li class="nav-item">
           <a target="_blank" rel="noopener" class="nav-link" href="https://github.com/tzelleke/flask-dash-app"><i
               class="fab fa-github"></i> GitHub</a>
