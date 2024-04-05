@@ -7,6 +7,7 @@ from typing import Callable
 
 from utils.render_readme import get_rendered_readme
 from forms.userbase_logic import SignUpForm, SignInForm
+from forms.stocks_logic import SymbolPickForm
 from comms import get_sign_up_response, get_sign_in_response
 from utils import logger
 
@@ -132,8 +133,15 @@ def sign_out():
     session.pop('password', None)
     return redirect(url_for("index"))
 
-@flask_app.route("/tradingview", methods=["GET", "POST"])
-def tradingview_page() -> str:
-    return render_template(
-        "tradingview.html"
-        )
+@flask_app.route('/stock_dashboard', methods=['GET', 'POST'])
+@flask_app.route('/stock_dashboard/<symbol>', methods=['GET'])
+def stock_dashboard(symbol: str = None):    
+    form = SymbolPickForm()
+
+    
+    if form.validate_on_submit():
+        print("right place")
+        print(f"Stock got: {form.symbol.data}")
+        return render_template('stock_dashboard.html', form=form, symbol=form.symbol.data)
+    else:
+        return render_template('stock_dashboard.html', form=form)
