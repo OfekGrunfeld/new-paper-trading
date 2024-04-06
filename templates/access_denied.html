@@ -2,17 +2,14 @@
 
 {% block styles %}
   {{ super() }}
-  {{ styles }}
 {% endblock %}
 
 {% block content %}
-  <div class="container pb-5">
-    <div class="row justify-content-center">
-      <div class="col-auto col-md-10">
-        {{ content }}
-      </div>
-    </div>
-  </div>
+<div class="container text-center mt-5">
+    <h1>Access Denied</h1>
+    <p>You do not have permission to access {{ requested_page }}.</p>
+    <a href="/" class="btn btn-primary">Go to Home Page</a>
+</div>
 {% endblock %}
 
 {% block footer %}

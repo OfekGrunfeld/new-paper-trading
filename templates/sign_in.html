@@ -2,7 +2,9 @@
 
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}{{ super() }} | Log In{% endblock %}
+{% block title %}
+    {{ super() }} | Log In
+{% endblock %}
 
 {% block content %}
 <div class="container theme-showcase" role="main" style="margin-top: 75px">
@@ -16,4 +18,8 @@
         <input type="submit" value="Log In">
     </form>
 </div>
+{% endblock %}
+
+{% block footer %}
+  {{ super() }} 
 {% endblock %}

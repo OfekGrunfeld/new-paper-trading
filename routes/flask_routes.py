@@ -1,15 +1,18 @@
-from flask import current_app as flask_app
-from flask import render_template, redirect, session
-from flask.helpers import url_for
 from requests import Response
 from datetime import timedelta
 from typing import Callable
+from functools import wraps
 
-from utils.render_readme import get_rendered_readme
+from flask import current_app as flask_app
+from flask import render_template, redirect, session, request
+from flask.helpers import url_for
+
+from utils.render_readme import get_rendered_readme 
+from utils import logger
 from forms.userbase_logic import SignUpForm, SignInForm
 from forms.stocks_logic import SymbolPickForm
 from comms import get_sign_up_response, get_sign_in_response
-from utils import logger
+
 
 
 @flask_app.before_request
@@ -38,13 +41,14 @@ def check_signed_in():
     Decorator to check if a user is signed in 
     """
     def wrapper(func: Callable):
-        import functools
-        @functools.wraps(func)
+        @wraps(func)
         def f(*args, **kwargs):
             # first check for logged in
             username = _signed_in()
+            requested_page: str = url_for(request.endpoint, **request.view_args).lstrip(r'/')
             if not username:
-                return redirect(url_for("sign_in"))
+                print("right place")
+                return render_template("access_denied.html", requested_page=requested_page)
             return func(*args, **kwargs)
         return f
     return wrapper
@@ -134,7 +138,7 @@ def sign_out():
     return redirect(url_for("index"))
 
 @flask_app.route('/stock_dashboard', methods=['GET', 'POST'])
-@flask_app.route('/stock_dashboard/<symbol>', methods=['GET'])
+@check_signed_in()
 def stock_dashboard(symbol: str = None):    
     form = SymbolPickForm()
 

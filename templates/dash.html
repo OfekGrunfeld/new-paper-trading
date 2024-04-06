@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
+
 {% block meta %}
   {{ super() }}
   {{ metas }}
 {% endblock %}
+
 {% block styles %}
   {{ super() }}
   {{ css }}
 {% endblock %}
+
 {% block content %}
   {{ app_entry }}
 {% endblock %}
+
 {% block scripts %}
   {{ super() }}
   {{ dash_config }}
