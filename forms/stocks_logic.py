@@ -17,7 +17,10 @@ class TradeForm(FlaskForm):
     stop_loss_check = BooleanField("Stop-Loss Order")
     take_profit_check = BooleanField("Take-Profit Order")
 
-def get_locked_trade_form():
+def get_locked_trade_form() -> TradeForm:
+    """"
+    Get a trade form with every field locked
+    """
     tf = TradeForm()
     for field in tf:
         field.render_kw = {'disabled': 'disabled'}

@@ -6,6 +6,10 @@ from utils.logger_script import logger
 
 
 def get_symbol_info(symbol: str) -> Union[dict, None]:
+    """
+    Get yfinance's "info" for a symbol. Returns a dict if valid for most symbols, 
+    sometimes the dictionary will be invalid and an error should pop up.
+    """
     if symbol is None:
         logger.error(f"Entered symbol is None")
     try:

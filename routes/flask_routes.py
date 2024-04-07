@@ -159,6 +159,13 @@ def stock_dashboard(symbol: str = None):
     if symbol is None:
         print("please enter symbol")
         return redirect_to_access_denied()
+    
+    symbol_form = SymbolPickForm()
+    if symbol_form.validate_on_submit():
+        # Handle symbol selection logic
+        selected_symbol = symbol_form.symbol.data
+        return redirect(f"{url_for(f'stock_dashboard')}/{selected_symbol}")
+    
     # got symbol
     trade_form = TradeForm()
     info = yfinance_helper.get_symbol_info(symbol)
@@ -178,7 +185,8 @@ def stock_dashboard(symbol: str = None):
         # Redirect or render template after processing
         return render_template(
             "stock_dashboard.html", 
-            trade_form=TradeForm(),
+            trade_form=trade_form, 
+            symbol_form=symbol_form,
         )
     else:
         # Handle the GET request or form errors
@@ -186,6 +194,7 @@ def stock_dashboard(symbol: str = None):
             return render_template(
                 "stock_dashboard.html", 
                 trade_form=trade_form, 
+                symbol_form=symbol_form,
                 symbol=symbol.upper(),
                 bid=info["bid"],
                 ask=info["ask"]
@@ -194,87 +203,6 @@ def stock_dashboard(symbol: str = None):
             return render_template(
                 "stock_dashboard.html", 
                 trade_form=get_locked_trade_form(), 
+                symbol_form=symbol_form,
                 symbol="Invalid symbol"
             )
-# @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
-# @check_signed_in()
-# def stock_dashboard(symbol: str = None):
-#     symbol_form = SymbolPickForm()
-
-#     try:
-#         print(f"Received: {symbol_form.symbol.data}")
-#     except Exception as error:
-#         print(f"ellololololololololololololololololol")
-
-#     if symbol_form.validate_on_submit(): # "symbol_submit" in request.form and :
-#         # Handle symbol selection logic
-#         selected_symbol = symbol_form.symbol.data
-#         print("here")
-#         return redirect(url_for('stock_dashboard', symbol=selected_symbol))
-
-#     return render_template('index.html')
-    
-
-# @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
-# @check_signed_in()
-# def stock_dashboard(symbol: str):    
-#     print(symbol)
-#     symbol_form = SymbolPickForm()
-#     trade_form = TradeForm()
-
-#     try:
-#         print(f"Received: {symbol_form.symbol.data}")
-#     except Exception as error:
-#         print(f"ellololololololololololololololololol")
-    
-#     if symbol_form.validate_on_submit(): # "symbol_submit" in request.form and :
-#         # Handle symbol selection logic
-#         selected_symbol = symbol_form.symbol.data
-#         print("here")
-#         return redirect(url_for('stock_dashboard', symbol=selected_symbol))
-
-#     if trade_form.validate_on_submit(): # "trade_submit" in request.form
-#         # Handle trade logic
-#         # This is where you would process the trade based on the inputs
-#         flash('Trade successfully submitted!', 'success')
-#         print("there")
-#         return redirect(url_for('stock_dashboard'))
-
-#     return render_template('stock_dashboard.html', symbol="NASDAQ:AAPL", trade_form=trade_form)
-
-# @flask_app.route('/abc/stock_dashboard', methods=['GET', 'POST'])
-# @check_signed_in()
-# def abcstock_dashboard(symbol: str = None):    
-#     form = SymbolPickForm()
-
-    
-#     if form.validate_on_submit():
-#         print("right place")
-#         print(f"Stock got: {form.symbol.data}")
-#         return render_template('stock_dashboard.html', form=form, symbol=form.symbol.data)
-#     else:
-#         return render_template('stock_dashboard.html', form=form)    
-
-# def random():
-#     symbol_form = SymbolPickForm()
-#     trade_form = TradeForm()
-
-#     try:
-#         print(f"Received: {symbol_form.symbol.data}")
-#     except Exception as error:
-#         print(f"ellololololololololololololololololol")
-    
-#     if symbol_form.validate_on_submit(): # "symbol_submit" in request.form and :
-#         # Handle symbol selection logic
-#         selected_symbol = symbol_form.symbol.data
-#         print("here")
-#         return redirect(url_for('stock_dashboard', symbol=selected_symbol))
-
-#     if trade_form.validate_on_submit(): # "trade_submit" in request.form
-#         # Handle trade logic
-#         # This is where you would process the trade based on the inputs
-#         flash('Trade successfully submitted!', 'success')
-#         print("there")
-#         return redirect(url_for('stock_dashboard'))
-
-
