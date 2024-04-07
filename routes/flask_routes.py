@@ -10,7 +10,7 @@ from flask.helpers import url_for
 from utils.render_readme import get_rendered_readme 
 from utils import logger, yfinance_helper
 from forms.userbase_logic import SignUpForm, SignInForm
-from forms.stocks_logic import SymbolPickForm, TradeForm
+from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
 from comms import get_sign_up_response, get_sign_in_response
 
 
@@ -152,35 +152,29 @@ def sign_out():
 
 
 @flask_app.route('/stock_dashboard', methods=['GET'])
+@flask_app.route('/stock_dashboard/', methods=['GET'])
 @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
 @check_signed_in()
 def stock_dashboard(symbol: str = None):
     if symbol is None:
         print("please enter symbol")
         return redirect_to_access_denied()
-    
+    # got symbol
     trade_form = TradeForm()
-    logger.debug(f"Chosen symbol: {symbol}")
     info = yfinance_helper.get_symbol_info(symbol)
-    print(type(info))
+    logger.debug(f"type of info: {type(info)}")
     try:
         print(f"Bid: {info["bid"]}, Ask: {info["ask"]}")
-        print(info)
+        # print(info)
     except:
-        print("symbol likely doesn't exist")
+        logger.error("symbol likely doesn't exist")
+        info = None
     logger.debug(f"Form submitted")
     logger.debug(f"Form data: {trade_form.data}")
+
+
     if trade_form.validate_on_submit():
-        # Process form data
-        print(f"Order Type: {trade_form.order_type.data}")
-        print(f"Quantity: {trade_form.quantity.data}")
-        if trade_form.order_type.data in ['limit', 'stop_limit']:
-            print(f"Limit Price: {trade_form.limit_price.data}")
-        if trade_form.order_type.data in ['stop', 'stop_limit']:
-            print(f"Stop Price: {trade_form.stop_price.data}")
-        print(f"Time in Force: {trade_form.time_in_force.data}")
-        print(f"Stop Loss Check: {trade_form.stop_loss_check.data}")
-        print(f"Take Profit Check: {trade_form.take_profit_check.data}")
+        logger.debug(f"Trade form submitted")
         # Redirect or render template after processing
         return render_template(
             "stock_dashboard.html", 
@@ -196,11 +190,12 @@ def stock_dashboard(symbol: str = None):
                 bid=info["bid"],
                 ask=info["ask"]
             )
-        
-        return render_template(
-            "stock_dashboard.html", 
-            trade_form=trade_form, 
-        )
+        else:
+            return render_template(
+                "stock_dashboard.html", 
+                trade_form=get_locked_trade_form(), 
+                symbol="Invalid symbol"
+            )
 # @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
 # @check_signed_in()
 # def stock_dashboard(symbol: str = None):
