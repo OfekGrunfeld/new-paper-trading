@@ -23,3 +23,12 @@ def get_symbol_info(symbol: str) -> Union[dict, None]:
     except Exception as error:
         logger.error(f"222 Tried getting info for probably non-existent symbol: {symbol}.\nError:{error}")
         return None
+    
+
+def func():
+    info = yf.Ticker("aapl").info["currentPrice"]
+    print(info)
+
+
+if __name__ == "__main__":
+    func()

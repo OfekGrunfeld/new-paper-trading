@@ -23,12 +23,27 @@ def get_sign_up_response(email: str, username: str, password: str) -> Union[requ
         logger.error(f"Got unexpected error: {error}")
         return {"internal_error": error}
     
-
 def get_sign_in_response(username: str, password: str):
     try:
         response: requests.Response = requests.post(
             url=f"{SERVER_URL}/sign_in",
             params={"username": username, "password": password},
+            verify=False,
+            timeout=5
+        )
+        return response
+    except MaxRetryError as error:
+        logger.error(f"Got too many retries for server: {error}")
+        return {"internal_error": error}
+    except Exception as error:
+        logger.error(f"Got unexpected error: {error}")
+        return {"internal_error": error}
+    
+def submit_order(order: dict):
+    try:
+        response: requests.Response = requests.post(
+            url=f"{SERVER_URL}/submit_order",
+            json=order,
             verify=False,
             timeout=5
         )
