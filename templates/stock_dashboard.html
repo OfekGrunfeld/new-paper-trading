@@ -122,6 +122,9 @@
       </div>
       {% endif %}
       <div class="form-group">
+        {{ wtf.form_field(trade_form.side) }}
+      </div>
+      <div class="form-group">
         {{ wtf.form_field(trade_form.order_type) }}
       </div>
       <div class="form-group">
