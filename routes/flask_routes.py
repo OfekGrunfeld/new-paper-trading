@@ -1,10 +1,8 @@
 from requests import Response
 from datetime import timedelta
-from typing import Callable, Union, Any
-from functools import wraps
 
 from flask import current_app as flask_app
-from flask import render_template, redirect, session, flash, request
+from flask import render_template, redirect, session
 from flask.helpers import url_for
 
 from utils.render_readme import get_rendered_readme 
@@ -12,8 +10,7 @@ from utils import logger, yfinance_helper
 from forms.userbase_logic import SignUpForm, SignInForm
 from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
 from comms import get_sign_up_response, get_sign_in_response, submit_order
-
-
+from routes.utils.auth import check_signed_in, redirect_to_access_denied, _signed_in
 
 @flask_app.before_request
 def make_session_permanent():
@@ -24,48 +21,6 @@ def make_session_permanent():
     if not username:
         return
 
-def _signed_in():
-    """
-    Internal function to check if a user 
-    is signed in through the session
-    """
-    if 'username' in session:
-        # cookie already created, and decoded...
-        return session['username']
-    else:
-        # user not logged in
-        return None
-
-def redirect_to_access_denied():
-    try:
-        return render_template("access_denied.html", requested_page=get_current_page())
-    except Exception as error:
-        logger.error(f"Could not redirect to denied access page. redirected to home page")
-        return redirect(url_for("index"))
-
-def get_current_page() -> Union[Any, str, None]:
-    try:
-        requested_page: str = url_for(request.endpoint, **request.view_args).lstrip(r'/')
-        return requested_page
-    except Exception as error:
-        logger.error(f"Could not get current page: {error}")
-        return None
-
-def check_signed_in():
-    """
-    Decorator to check if a user is signed in 
-    """
-    def wrapper(func: Callable):
-        @wraps(func)
-        def f(*args, **kwargs):
-            # first check for logged in
-            username = _signed_in()
-            if not username:
-                print("right place")
-                return render_template("access_denied.html", requested_page=get_current_page())
-            return func(*args, **kwargs)
-        return f
-    return wrapper
 
 @flask_app.route("/")
 def index() -> str:
@@ -178,8 +133,6 @@ def stock_dashboard(symbol: str = None):
 
     
     trade_form = TradeForm()
-    logger.debug(f"Form data: {trade_form.data}")
-    print("almost")
     if trade_form.validate_on_submit():
         logger.debug(f"Trade form submitted")
         logger.debug(f"Form data: {trade_form.data}")
