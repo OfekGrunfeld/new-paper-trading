@@ -21,7 +21,6 @@ def make_session_permanent():
     if not username:
         return
 
-
 @flask_app.route("/")
 def index() -> str:
     return get_rendered_readme()
@@ -41,6 +40,7 @@ def sign_in() -> str:
                 logger.debug("RIGHT PLACE")
                 if response_json["success"] is True:
                     logger.debug("RIGHT PLACE2")
+                    session["id"] = response_json["extra"]
                     session["username"] = form.username.data
                     session["password"] = form.password.data
                     logger.debug(f"User {form.username.data} log in has been successful")
@@ -105,6 +105,13 @@ def sign_out():
     session.pop('password', None)
     return redirect(url_for("index"))
 
+@flask_app.route('/my/dashboard')
+def profile_dashboard():
+    return render_template(
+        "profile_dashboard.html", 
+        username=session["username"],
+        user_id=session["id"]
+        )
 
 @flask_app.route('/stock_dashboard', methods=['GET'])
 @flask_app.route('/stock_dashboard/', methods=['GET'])
