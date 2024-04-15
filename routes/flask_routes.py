@@ -10,7 +10,7 @@ from utils import logger, yfinance_helper
 from forms.userbase_logic import SignUpForm, SignInForm
 from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
 from comms import get_sign_up_response, get_sign_in_response, submit_order
-from routes.utils.auth import check_signed_in, redirect_to_access_denied, _signed_in
+from routes.utils.auth import sign_in_required, redirect_to_access_denied, _signed_in
 
 @flask_app.before_request
 def make_session_permanent():
@@ -40,7 +40,7 @@ def sign_in() -> str:
                 logger.debug("RIGHT PLACE")
                 if response_json["success"] is True:
                     logger.debug("RIGHT PLACE2")
-                    session["id"] = response_json["extra"]
+                    session["user_id"] = response_json["extra"]
                     session["username"] = form.username.data
                     session["password"] = form.password.data
                     logger.debug(f"User {form.username.data} log in has been successful")
@@ -99,27 +99,29 @@ def sign_up():
         return render_template("sign_up.html", form=form)
 
 @flask_app.route('/sign_out')
-@check_signed_in()
+@sign_in_required()
 def sign_out():
-    session.pop('username', None)
-    session.pop('password', None)
+    session.pop("username", None)
+    session.pop("password", None)
+    session.pop("user_id", None)
+
     return redirect(url_for("index"))
 
 @flask_app.route('/my/dashboard')
+@sign_in_required()
 def profile_dashboard():
     return render_template(
         "profile_dashboard.html", 
         username=session["username"],
-        user_id=session["id"]
+        user_id=session["user_id"]
         )
 
 @flask_app.route('/stock_dashboard', methods=['GET'])
 @flask_app.route('/stock_dashboard/', methods=['GET'])
 @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
-@check_signed_in()
+@sign_in_required()
 def stock_dashboard(symbol: str = None):
     if symbol is None:
-        print("please enter symbol")
         return redirect_to_access_denied()
     
     symbol_form = SymbolPickForm()
@@ -154,10 +156,10 @@ def stock_dashboard(symbol: str = None):
                 logger.debug("RIGHT PLACE")
                 if response_json["success"] is True:
                     logger.debug("RIGHT PLACE2")
-                    logger.debug(f"Order {order} has been successful")
+                    logger.info(f"Order {order} has been successful")
                     return redirect(f"{url_for(f'stock_dashboard')}/{symbol}")
                 else:
-                    logger.error(f"Order {order} has been  failed")
+                    logger.error(f"Order {order} has failed")
                     return redirect(f"{url_for(f'stock_dashboard')}/{symbol}")
             except Exception as error:
                 logger.error(f"Got bad response from other server: {error}")

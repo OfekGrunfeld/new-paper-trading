@@ -1,17 +1,21 @@
+from flask import session
+
 from typing import Union, Any
 import requests
 from urllib3.exceptions import MaxRetryError
-from os import environ
 
 from utils import logger
+from utils.env_variables import EnvironmentVariables
+from comms.symmetric_crypto import encrypt
 
-SERVER_URL = f"http://127.0.0.1:{environ.get('FASTAPI_PORT')}"
+FASTAPI_SERVER_URL = f"https://127.0.0.1:{EnvironmentVariables.FASTAPI_PORT}"
+
 
 def get_sign_up_response(email: str, username: str, password: str) -> Union[requests.Response | dict[str, Exception]]:
     try:
         response: requests.Response = requests.post(
-            url=f"{SERVER_URL}/sign_up",
-            params={"email": email, "username": username, "password": password},
+            url=f"{FASTAPI_SERVER_URL}/sign_up",
+            json=encrypt({"email": email, "username": username, "password": password}),
             verify=False,
             timeout=5
         )
@@ -26,8 +30,8 @@ def get_sign_up_response(email: str, username: str, password: str) -> Union[requ
 def get_sign_in_response(username: str, password: str):
     try:
         response: requests.Response = requests.post(
-            url=f"{SERVER_URL}/sign_in",
-            params={"username": username, "password": password},
+            url=f"{FASTAPI_SERVER_URL}/sign_in",
+            json=encrypt({"username": username, "password": password}),
             verify=False,
             timeout=5
         )
@@ -42,8 +46,8 @@ def get_sign_in_response(username: str, password: str):
 def submit_order(order: dict):
     try:
         response: requests.Response = requests.post(
-            url=f"{SERVER_URL}/submit_order",
-            json=order,
+            url=f"{FASTAPI_SERVER_URL}/submit_order",
+            json=encrypt({"id": session["user_id"], "order": order}),
             verify=False,
             timeout=5
         )

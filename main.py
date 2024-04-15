@@ -2,10 +2,11 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 
 from utils import ItsdangerousSessionInterface
+from utils import DefaultConfig
 
 def create_app():
     flask_app = Flask(__name__, instance_relative_config=True)
-    flask_app.config.from_object("config.DefaultConfig") # can't import DefaultConfig from config.config ?
+    flask_app.config.from_object("utils.DefaultConfig")
     Bootstrap(flask_app)
     flask_app.session_interface = ItsdangerousSessionInterface() 
 

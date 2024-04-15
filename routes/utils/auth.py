@@ -25,7 +25,7 @@ def _signed_in():
         # user not logged in
         return None
 
-def check_signed_in():
+def sign_in_required():
     """
     Decorator to check if a user is signed in 
     """
