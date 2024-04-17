@@ -2,7 +2,6 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 
 from utils import ItsdangerousSessionInterface
-from utils import DefaultConfig
 
 def create_app():
     flask_app = Flask(__name__, instance_relative_config=True)
