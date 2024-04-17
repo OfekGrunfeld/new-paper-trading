@@ -40,7 +40,7 @@ def sign_in() -> str:
                 logger.debug("RIGHT PLACE")
                 if response_json["success"] is True:
                     logger.debug("RIGHT PLACE2")
-                    session["user_id"] = response_json["extra"]
+                    session["uuid"] = response_json["data"]
                     session["username"] = form.username.data
                     session["password"] = form.password.data
                     logger.debug(f"User {form.username.data} log in has been successful")
@@ -76,6 +76,7 @@ def sign_up():
         if isinstance(response, Response):
             try:
                 response_json: dict = response.json()
+                logger.debug(f"Got response from fastAPI server: {response.status_code}, {response_json}")
                 if response["success"] == True:
                     logger.debug(f"User {form.username.data} sign up has been successful")
                 else:
@@ -103,7 +104,7 @@ def sign_up():
 def sign_out():
     session.pop("username", None)
     session.pop("password", None)
-    session.pop("user_id", None)
+    session.pop("uuid", None)
 
     return redirect(url_for("index"))
 
@@ -113,7 +114,7 @@ def profile_dashboard():
     return render_template(
         "profile_dashboard.html", 
         username=session["username"],
-        user_id=session["user_id"]
+        uuid=session["uuid"]
         )
 
 @flask_app.route('/stock_dashboard', methods=['GET'])

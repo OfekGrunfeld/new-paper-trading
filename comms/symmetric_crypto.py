@@ -4,6 +4,9 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 import json
 from utils import DefaultConfig
+import traceback
+
+from utils import logger
 
 backend = default_backend()
 
@@ -19,12 +22,15 @@ def pad_binary_data(binary_data: bytes) -> bytes:
     Returns:
         bytes: The padded binary data.
     """
-    block_size = 16
-    padding_length = block_size - (len(binary_data) % block_size)
-    return binary_data + b"\0" * padding_length
+    try:
+        block_size = 16
+        padding_length = block_size - (len(binary_data) % block_size)
+        return binary_data + b"\0" * padding_length
+    except Exception as error:
+        logger.critical(traceback.format_exc())
 
 
-def encrypt(binary_data: bytes) -> str:
+def encrypt(data) -> str:
     """
     Encrypt the binary data using AES-CBC.
 
@@ -34,6 +40,11 @@ def encrypt(binary_data: bytes) -> str:
     Returns:
         str: The encrypted data, serialized as a string.
     """
+    if isinstance(data, str):
+        binary_data = data.encode("utf-8")
+    if isinstance(data, dict):
+        binary_data = json.dumps(data).encode("utf-8")
+    logger.debug(f"Binary data: {binary_data}")
     padded_data = pad_binary_data(binary_data)
     iv = os.urandom(16)  # The initialization vector (IV) must be unpredictable
 
@@ -42,4 +53,4 @@ def encrypt(binary_data: bytes) -> str:
     encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
 
     # Serialize the encrypted data, IV, and original data length for storage
-    return f"AES.MODE_CBC${b64encode(iv).decode()}${len(binary_data)}${b64encode(encrypted_data).decode()}"
+    return f"{b64encode(iv).decode()}${len(binary_data)}${b64encode(encrypted_data).decode()}"

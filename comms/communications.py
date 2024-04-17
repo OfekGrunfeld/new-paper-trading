@@ -3,6 +3,7 @@ from flask import session
 from typing import Union, Any
 import requests
 from urllib3.exceptions import MaxRetryError
+import traceback
 
 from utils import logger
 from utils.env_variables import EnvironmentVariables
@@ -15,7 +16,7 @@ def get_sign_up_response(email: str, username: str, password: str) -> Union[requ
     try:
         response: requests.Response = requests.post(
             url=f"{FASTAPI_SERVER_URL}/sign_up",
-            json=encrypt({"email": email, "username": username, "password": password}),
+            params={"email": encrypt(email), "username": encrypt(username), "password": encrypt(password)},
             verify=False,
             timeout=5
         )
@@ -25,13 +26,14 @@ def get_sign_up_response(email: str, username: str, password: str) -> Union[requ
         return {"internal_error": error}
     except Exception as error:
         logger.error(f"Got unexpected error: {error}")
+        logger.critical(traceback.format_exc())
         return {"internal_error": error}
-    
+
 def get_sign_in_response(username: str, password: str):
     try:
         response: requests.Response = requests.post(
             url=f"{FASTAPI_SERVER_URL}/sign_in",
-            json=encrypt({"username": username, "password": password}),
+            params={"username": encrypt(username), "password": encrypt(password)},
             verify=False,
             timeout=5
         )
@@ -45,9 +47,10 @@ def get_sign_in_response(username: str, password: str):
     
 def submit_order(order: dict):
     try:
+        logger.info(f"uuid: {session["uuid"]}")
         response: requests.Response = requests.post(
             url=f"{FASTAPI_SERVER_URL}/submit_order",
-            json=encrypt({"id": session["user_id"], "order": order}),
+            params={"uuid": encrypt(session["uuid"]), "order": encrypt(order)},
             verify=False,
             timeout=5
         )
