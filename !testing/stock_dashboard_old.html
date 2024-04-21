@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .market-overview {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .market-overview-header {
+        margin-bottom: 1rem;
+    }
+
+    .symbol-form {
+        margin-bottom: 1rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="row justify-content-center">
+    <div class="col-auto col-md-10 market-overview">
+      <h2 class="market-overview-header">Stock Market Dashboard</h2>
+      
+      <!-- Symbol Selection Form BEGIN -->
+      <form method="POST" class="symbol-form">
+        {{ symbol_form.hidden_tag() }}
+        <div class="input-group">
+          {{ symbol_form.symbol(class='form-control', placeholder='Enter Stock Symbol, e.g., NASDAQ:AAPL') }}
+          <button type="submit" class="btn btn-primary">View Stock</button>
+        </div>
+      </form>
+      <!-- Symbol Selection Form END -->
+
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container" style="height:100%;width:100%">
+        <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+          <!-- important -->
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async> 
+            {
+            "autosize": true,
+            "symbol": "{{ symbol }}",
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "light",
+            "style": "1",
+            "locale": "en",
+            "enable_publishing": false,
+            "allow_symbol_change": true, 
+            "calendar": false,
+            "support_host": "https://www.tradingview.com"
+            }
+          </script> 
+          </div>
+        </div>
+      </div>
+      <!-- TradingView Widget END -->
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+  <div class="col-md-10">
+    <form method="POST" id="tradeForm">
+      {{ trade_form.hidden_tag() }}
+      {{ wtf.form_field(trade_form.symbol) }}
+
+      <!-- Display additional trading form fields here -->
+      {{ wtf.form_field(trade_form.bid_price, readonly=True) }}
+      {{ wtf.form_field(trade_form.ask_price, readonly=True) }}
+      {{ wtf.form_field(trade_form.order_type) }}
+      {{ wtf.form_field(trade_form.quantity) }}
+      {{ wtf.form_field(trade_form.limit_price) }}
+      {{ wtf.form_field(trade_form.stop_price) }}
+      {{ wtf.form_field(trade_form.time_in_force) }}
+      {{ wtf.form_field(trade_form.stop_loss_check) }}
+      {{ wtf.form_field(trade_form.take_profit_check) }}
+
+      <!-- Error display -->
+      {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      <input type="submit" value="Trade" class="btn btn-primary">
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {{ super() }} 
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let form = document.getElementById('stockForm');
+      let orderType = form.querySelector('select[name="order_type"]');
+      let limitPriceInput = form.querySelector('input[name="limit_price"]');
+      let stopPriceInput = form.querySelector('input[name="stop_price"]');
+
+      orderType.addEventListener('change', function() {
+        let selectedOrderType = orderType.value;
+        switch (selectedOrderType) {
+          case 'limit':
+            limitPriceInput.removeAttribute('disabled');
+            stopPriceInput.setAttribute('disabled', 'disabled');
+            break;
+          case 'stop':
+            stopPriceInput.removeAttribute('disabled');
+            limitPriceInput.setAttribute('disabled', 'disabled');
+            break;
+          default:
+            limitPriceInput.setAttribute('disabled', 'disabled');
+            stopPriceInput.setAttribute('disabled', 'disabled');
+            break;
+        }
+      });
+    });
+  </script>
+{% endblock %}

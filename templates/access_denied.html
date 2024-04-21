@@ -8,6 +8,9 @@
 <div class="container text-center mt-5">
     <h1>Access Denied</h1>
     <p>You do not have permission to access {{ requested_page }}.</p>
+    {% if reason %}
+    <p>{{ reason }}</p>
+    {% endif %}
     <a href="/" class="btn btn-primary">Go to Home Page</a>
 </div>
 {% endblock %}

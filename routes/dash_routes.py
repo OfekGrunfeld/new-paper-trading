@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import current_app as flask_app
-from flask import render_template
 
 from flask_dash import crossfilter_example, demo, iris_kmeans
 

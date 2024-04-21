@@ -1,10 +1,10 @@
 from typing import override
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, SelectField, IntegerField, BooleanField, RadioField ,FloatField
+from wtforms import StringField, DecimalField, SelectField, BooleanField, RadioField ,FloatField
 from wtforms.validators import DataRequired, Optional, NumberRange 
 
-from forms.defaults import DefaultFormValidators
+from forms.helper import DefaultFormValidators
 
 class SymbolPickForm(FlaskForm):
     symbol = StringField("Symbol", validators=DefaultFormValidators.symbol_pick)
@@ -22,15 +22,15 @@ class TradeForm(FlaskForm):
         )
     shares = FloatField(
         "Shares", 
-        validators=[DataRequired(), NumberRange(min=0, message='bla1')]
+        validators=[DataRequired(), NumberRange(min=0, message="Please enter a valid number")]
         )
     limit_price = DecimalField(
         "Limit Price", 
-        validators=[Optional(), NumberRange(min=0, message='bla2')]
+        validators=[Optional(), NumberRange(min=0, message="Please enter a valid number")]
         )
     stop_price = DecimalField(
         "Stop Price", 
-        validators=[Optional(), NumberRange(min=0, message='bla3')]
+        validators=[Optional(), NumberRange(min=0, message="Please enter a valid number")]
         )
     time_in_force = SelectField(
         "Time in Force", 

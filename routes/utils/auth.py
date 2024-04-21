@@ -41,9 +41,9 @@ def sign_in_required():
         return f
     return wrapper
 
-def redirect_to_access_denied():
+def redirect_to_access_denied(reason: str = None):
     try:
-        return render_template("access_denied.html", requested_page=get_current_page())
+        return render_template("access_denied.html", requested_page=get_current_page(), reason=reason)
     except Exception as error:
         logger.error(f"Could not redirect to denied access page. redirected to home page")
         return redirect(url_for("index"))

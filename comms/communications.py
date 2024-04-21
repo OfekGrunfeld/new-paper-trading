@@ -7,7 +7,7 @@ import traceback
 
 from utils import logger
 from utils.env_variables import EnvironmentVariables
-from comms.symmetric_crypto import encrypt
+from comms.encrypt import encrypt
 
 FASTAPI_SERVER_URL = f"https://127.0.0.1:{EnvironmentVariables.FASTAPI_PORT}"
 

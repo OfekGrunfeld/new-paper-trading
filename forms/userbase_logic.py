@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 
-from forms.defaults import DefaultFormValidators
+from forms.helper import DefaultFormValidators
 
 class SignUpForm(FlaskForm):
     email = StringField("Email", validators=DefaultFormValidators.email)

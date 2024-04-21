@@ -239,9 +239,6 @@ def init_callbacks(flask_dash_app: FlaskDash):
 
     return flask_dash_app
 
-
-
-
 def init_flask_dash_app(server: Flask):
     """Create a Plotly Dash dashboard."""
     flask_dash_app = FlaskDash(
