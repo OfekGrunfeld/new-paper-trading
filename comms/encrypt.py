@@ -44,7 +44,6 @@ def encrypt(data) -> str:
         binary_data = data.encode("utf-8")
     if isinstance(data, dict):
         binary_data = json.dumps(data).encode("utf-8")
-    logger.debug(f"Binary data: {binary_data}")
     padded_data = pad_binary_data(binary_data)
     iv = os.urandom(16)  # The initialization vector (IV) must be unpredictable
 

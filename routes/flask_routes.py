@@ -21,7 +21,7 @@ def index() -> str:
 @sign_in_required()
 def stock_dashboard(symbol: str = None):
     if symbol is None:
-        return redirect_to_access_denied(reason="Choose a symbol")
+        return redirect(f"{url_for('stock_dashboard')}/aapl")
     
     symbol_form = SymbolPickForm()
     if symbol_form.validate_on_submit():
@@ -43,13 +43,12 @@ def stock_dashboard(symbol: str = None):
     trade_form = TradeForm()
     if trade_form.validate_on_submit():
         logger.debug(f"Trade form submitted")
-        logger.debug(f"Form data: {trade_form.data}")
+
         logger.debug(f"Submitting form to server")
         order = trade_form.data
         order["symbol"] = symbol
         response = submit_order(order)
         if isinstance(response, Response):
-            print(response.status_code, response.json())
             try:
                 response_json: dict = response.json()
                 if response_json["success"] is True:
@@ -92,3 +91,4 @@ def stock_dashboard(symbol: str = None):
                 symbol_form=symbol_form,
                 symbol="Invalid symbol"
             )
+        

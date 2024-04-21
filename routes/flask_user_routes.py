@@ -1,4 +1,4 @@
-
+import datetime
 from requests import Response
 
 from flask import current_app as flask_app
@@ -6,7 +6,7 @@ from flask import render_template, redirect, session
 from flask.helpers import url_for
 
 from forms.userbase_logic import SignUpForm, SignInForm
-from comms import get_sign_up_response, get_sign_in_response
+from comms import get_sign_up_response, get_sign_in_response, get_user_database_table
 from routes.utils.auth import sign_in_required
 from utils.logger_script import logger
 
@@ -98,4 +98,42 @@ def profile_dashboard():
         "profile_dashboard.html", 
         username=session["username"],
         uuid=session["uuid"]
-        )
+    )
+
+@flask_app.route('/my/data/<database_name>')
+@sign_in_required()
+def database_data(database_name: str):
+    # add check to see if it's one of databases which are supported
+    # add proper logic for redirecting and such
+    response = get_user_database_table(database_name=database_name)
+
+    if isinstance(response, Response):
+        try:
+            response_json: dict = response.json()
+            if response_json["success"] is True:
+                logger.info(f"Outputting transaction history to html...")
+                return render_template(
+                    "view_user_database_table.html", 
+                    database_name=database_name.capitalize(),
+                    username=session["username"],
+                    records=response_json["data"]
+                )
+            else:
+                logger.error(f"Failed getting user's transaction history")
+                return redirect(f"{url_for('/my/dashboard')}")
+        except Exception as error:
+            logger.error(f"Got bad response from other server: {error}")
+            return redirect(f"{url_for(f'profile_dashboard')}")
+        
+@flask_app.template_filter('format_iso_datetime')
+def format_iso_datetime(value, format='%d-%m-%Y %H:%M:%S'):
+    if value is None:
+        return ""
+    # Parse the ISO formatted datetime string
+    try:
+        date_time_obj = datetime.datetime.fromisoformat(value)
+        # Return the formatted string
+        return date_time_obj.strftime(format)
+    except ValueError:
+        return value  # Return the original value if parsing fails
+        
