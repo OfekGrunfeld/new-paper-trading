@@ -9,10 +9,16 @@ def create_app():
     flask_app.session_interface = ItsdangerousSessionInterface() 
 
     with flask_app.app_context() as _:
+        # Dash routes
         from routes import dash_routes
+
+        # Flask Routes
         from routes import flask_routes
         from routes import flask_routes_helper
-        from routes import flask_user_routes
+        from routes import flask_users
+
+        # Jinja templates
+        from templates.utils import template_filters
 
     return flask_app
 

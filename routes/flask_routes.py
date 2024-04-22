@@ -68,7 +68,7 @@ def stock_dashboard(symbol: str = None):
 
         # Redirect or render template after processing
         return render_template(
-            "stock_dashboard.html", 
+            "stocks/stock_dashboard.html", 
             trade_form=TradeForm(formdata=None), 
             symbol_form=symbol_form,
             symbol=symbol
@@ -77,7 +77,7 @@ def stock_dashboard(symbol: str = None):
         # Handle the GET request or form errors
         if info is not None:
             return render_template(
-                "stock_dashboard.html", 
+                "stocks/stock_dashboard.html", 
                 trade_form=trade_form, 
                 symbol_form=symbol_form,
                 symbol=symbol,
@@ -86,7 +86,7 @@ def stock_dashboard(symbol: str = None):
             )
         else:
             return render_template(
-                "stock_dashboard.html", 
+                "stocks/stock_dashboard.html", 
                 trade_form=get_locked_trade_form(), 
                 symbol_form=symbol_form,
                 symbol="Invalid symbol"

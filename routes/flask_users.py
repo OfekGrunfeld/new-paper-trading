@@ -1,4 +1,3 @@
-import datetime
 from requests import Response
 
 from flask import current_app as flask_app
@@ -45,7 +44,7 @@ def sign_in() -> str:
     else:
         # somehow return that passwords don't match then redirect to the same page
         logger.error(f"User {form.username.data} log in has failed miserably")
-        return render_template("sign_in.html", form=form)
+        return render_template("users/sign_in.html", form=form)
 
 @flask_app.route("/sign_up", methods=["GET", "POST"])
 def sign_up():
@@ -76,7 +75,7 @@ def sign_up():
         return redirect(url_for("index"))
     elif form.validate_on_submit() and form.password.data != form.repeat_password.data:
         error = "Passwords do not match"
-        return render_template("sign_up.html", form=form,error=error)
+        return render_template("users/sign_up.html", form=form,error=error)
     else:
         # somehow return that passwords don't match then redirect to the same page
         logger.error(f"User {form.username.data} sign up has failed miserably")
@@ -95,7 +94,7 @@ def sign_out():
 @sign_in_required()
 def profile_dashboard():
     return render_template(
-        "profile_dashboard.html", 
+        "users/profile_dashboard.html", 
         username=session["username"],
         uuid=session["uuid"]
     )
@@ -113,7 +112,7 @@ def database_data(database_name: str):
             if response_json["success"] is True:
                 logger.info(f"Outputting transaction history to html...")
                 return render_template(
-                    "view_user_database_table.html", 
+                    "users/view_user_database_table.html", 
                     database_name=database_name.capitalize(),
                     username=session["username"],
                     records=response_json["data"]
@@ -124,16 +123,4 @@ def database_data(database_name: str):
         except Exception as error:
             logger.error(f"Got bad response from other server: {error}")
             return redirect(f"{url_for(f'profile_dashboard')}")
-        
-@flask_app.template_filter('format_iso_datetime')
-def format_iso_datetime(value, format='%d-%m-%Y %H:%M:%S'):
-    if value is None:
-        return ""
-    # Parse the ISO formatted datetime string
-    try:
-        date_time_obj = datetime.datetime.fromisoformat(value)
-        # Return the formatted string
-        return date_time_obj.strftime(format)
-    except ValueError:
-        return value  # Return the original value if parsing fails
         

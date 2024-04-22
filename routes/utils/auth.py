@@ -35,15 +35,14 @@ def sign_in_required():
             # first check for logged in
             username = _signed_in()
             if not username:
-                print("right place")
-                return render_template("access_denied.html", requested_page=get_current_page())
+                return render_template("misc/access_denied.html", requested_page=get_current_page(), reason="To view this page you must be logged in")
             return func(*args, **kwargs)
         return f
     return wrapper
 
 def redirect_to_access_denied(reason: str = None):
     try:
-        return render_template("access_denied.html", requested_page=get_current_page(), reason=reason)
+        return render_template("misc/access_denied.html", requested_page=get_current_page(), reason=reason)
     except Exception as error:
         logger.error(f"Could not redirect to denied access page. redirected to home page")
         return redirect(url_for("index"))
