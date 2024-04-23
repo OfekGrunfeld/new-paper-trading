@@ -7,7 +7,7 @@ from flask.helpers import url_for
 from utils.render_readme import get_rendered_readme 
 from utils import logger, yfinance_helper
 from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
-from comms import submit_order
+from comms.communications import submit_order
 from routes.utils.auth import sign_in_required, redirect_to_access_denied
 
 

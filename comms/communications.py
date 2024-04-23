@@ -63,8 +63,24 @@ def submit_order(order: dict):
 def get_user_database_table(database_name: str):
     try:
         response: requests.Response = requests.get(
-            url=f"{FASTAPI_SERVER_URL}/get_user_database_table/{database_name}",
+            url=f"{FASTAPI_SERVER_URL}/get_user/database/{database_name}",
             params={"uuid": encrypt(session["uuid"])},
+            verify=False,
+            timeout=5
+        )
+        return response
+    except MaxRetryError as error:
+        logger.error(f"Got too many retries for server: {error}")
+        return {"internal_error": error}
+    except Exception as error:
+        logger.error(f"Got unexpected error: {error}")
+        return {"internal_error": error}
+
+def get_update_user_response(attribute_to_update: str, new_attribute_value: str):
+    try:
+        response: requests.Response = requests.get(
+            url=f"{FASTAPI_SERVER_URL}/update/{attribute_to_update}",
+            params={"uuid": encrypt(session["uuid"]), "password": encrypt(session["password"]), "value": encrypt(new_attribute_value)},
             verify=False,
             timeout=5
         )

@@ -1,11 +1,11 @@
 from requests import Response
 
 from flask import current_app as flask_app
-from flask import render_template, redirect, session
+from flask import render_template, redirect, session, request
 from flask.helpers import url_for
 
-from forms.userbase_logic import SignUpForm, SignInForm
-from comms import get_sign_up_response, get_sign_in_response, get_user_database_table
+from forms.userbase_logic import SignUpForm, SignInForm, UpdateUserForm
+from comms.communications import get_sign_up_response, get_sign_in_response, get_user_database_table, get_update_user_response
 from routes.utils.auth import sign_in_required
 from utils.logger_script import logger
 
@@ -52,7 +52,6 @@ def sign_up():
 
     if form.validate_on_submit() and form.password.data == form.repeat_password.data:
         # communicate with fastAPI server to regiter the user
-        print(f"{form.data}")
         response = get_sign_up_response(email=form.email.data, username=form.username.data, password=form.password.data)
         
         if isinstance(response, Response):
@@ -79,7 +78,7 @@ def sign_up():
     else:
         # somehow return that passwords don't match then redirect to the same page
         logger.error(f"User {form.username.data} sign up has failed miserably")
-        return render_template("sign_up.html", form=form)
+        return render_template("users/sign_up.html", form=form)
 
 @flask_app.route('/sign_out')
 @sign_in_required()
@@ -99,7 +98,7 @@ def profile_dashboard():
         uuid=session["uuid"]
     )
 
-@flask_app.route('/my/data/<database_name>')
+@flask_app.route('/my/data/<database_name>', methods=['GET'])
 @sign_in_required()
 def database_data(database_name: str):
     # add check to see if it's one of databases which are supported
@@ -123,4 +122,34 @@ def database_data(database_name: str):
         except Exception as error:
             logger.error(f"Got bad response from other server: {error}")
             return redirect(f"{url_for(f'profile_dashboard')}")
-        
+
+@flask_app.route('/update_user', methods=['GET', 'POST'])
+def update_user():
+    update_form = UpdateUserForm()
+
+    if request.method == "POST" and update_form.validate_on_submit():
+        logger.debug(f"Data is: {update_form.data}")
+
+        if update_form.password.data != session["password"]:
+            logger.warning(f"Password does not match session")
+        else:
+            response = get_update_user_response(update_form.attribute_to_update.data, update_form.data[f"new_{update_form.attribute_to_update.data}"])
+            if isinstance(response, Response):
+                try:
+                    response_json: dict = response.json()
+                    logger.debug(f"Got response from fastAPI server: {response.status_code}, {response_json}")
+                    if response["success"] == True:
+                        logger.debug(f"User {session["username"]}'s update of {update_form.attribute_to_update.data} has been successful")
+                    else:
+                        logger.error(f"User {session["username"]} update of {update_form.attribute_to_update.data} has failed")
+                except Exception as error:
+                    logger.error(f"Got bad response from other server: {error}")
+            if isinstance(response, dict):
+                try:
+                    logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
+                except Exception as error:
+                    logger.error(f"Got bad response from own server: {error}")
+    else:
+        logger.error(f"Update of user {session["username"]} failed")
+
+    return render_template('users/update_user.html', update_form=update_form)

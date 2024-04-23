@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+    {{ super() }} | Update User
+{% endblock %}
+
+{% block styles %}
+ {{ super() }} 
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Update User Information</h2>
+    <form action="{{ url_for('update_user') }}" id="updateForm" method="POST">
+        {{ update_form.hidden_tag() }}
+        <div class="form-group">
+            {{ wtf.form_field(update_form.password) }}
+        </div>
+        <div class="form-group">
+            {{ wtf.form_field(update_form.attribute_to_update) }}
+        </div>
+        <div class="form-group" id="emailField">
+            {{ wtf.form_field(update_form.new_email) }}
+        </div>
+        <div class="form-group" id="usernameField">
+            {{ wtf.form_field(update_form.new_username) }}
+        </div>
+        <div class="form-group" id="passwordField">
+            {{ wtf.form_field(update_form.new_password) }}
+        </div>
+        <input type="submit" value="Update User">
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/updateUserForm.js') }}"></script>
+{% endblock %}
