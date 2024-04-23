@@ -15,10 +15,11 @@
             <tr>
                 <th>Timestamp</th>
                 <th>Shares</th>
-                <th>Cost Per Share</th>
-                <th>Total Cost</th>
-                <th>Profit Since Bought</th>
-                <th>Percentage</th>
+                <th>Bough at </th>
+                <th>Total Worth</th>
+                <th>Profit Per Share Since Bought</th>
+                <th>Total Profit Since Bought</th>
+                <th>Profit Percentage</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@
                 <td>${{ "%.2f"|format(transaction.cost_per_share) }}</td>
                 <td>${{ "%.2f"|format(transaction.shares * transaction.cost_per_share) }}</td>
                 <td>${{ "%.2f"|format(current_prices[symbol] - transaction.cost_per_share) }}</td>
+                <td>${{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) * transaction.shares) }}</td>
                 <td>{{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) /  transaction.cost_per_share * 100) }}%</td>
             </tr>
             {% endfor %}
