@@ -78,7 +78,7 @@ def get_user_database_table(database_name: str):
 
 def get_update_user_response(attribute_to_update: str, new_attribute_value: str):
     try:
-        response: requests.Response = requests.get(
+        response: requests.Response = requests.put(
             url=f"{FASTAPI_SERVER_URL}/update/{attribute_to_update}",
             params={"uuid": encrypt(session["uuid"]), "password": encrypt(session["password"]), "value": encrypt(new_attribute_value)},
             verify=False,

@@ -133,13 +133,19 @@ def update_user():
         if update_form.password.data != session["password"]:
             logger.warning(f"Password does not match session")
         else:
-            response = get_update_user_response(update_form.attribute_to_update.data, update_form.data[f"new_{update_form.attribute_to_update.data}"])
+            attribute_to_update = update_form.attribute_to_update.data
+            attribute_value = update_form.data[f"new_{attribute_to_update}"]
+
+            response = get_update_user_response(attribute_to_update, attribute_value)
+
             if isinstance(response, Response):
                 try:
                     response_json: dict = response.json()
                     logger.debug(f"Got response from fastAPI server: {response.status_code}, {response_json}")
-                    if response["success"] == True:
-                        logger.debug(f"User {session["username"]}'s update of {update_form.attribute_to_update.data} has been successful")
+                    if response_json["success"] == True:
+                        logger.debug(f"User {session["username"]}'s update of {attribute_to_update} has been successful")
+                        session[attribute_to_update] = attribute_value
+                        logger.debug(f"User {attribute_to_update.capitalize()} is now {session[attribute_to_update]}")
                     else:
                         logger.error(f"User {session["username"]} update of {update_form.attribute_to_update.data} has failed")
                 except Exception as error:
@@ -152,4 +158,4 @@ def update_user():
     else:
         logger.error(f"Update of user {session["username"]} failed")
 
-    return render_template('users/update_user.html', update_form=update_form)
+    return render_template('users/update_user.html', update_form=UpdateUserForm())
