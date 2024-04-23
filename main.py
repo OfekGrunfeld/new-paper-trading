@@ -16,6 +16,7 @@ def create_app():
         from routes import flask_routes
         from routes import flask_routes_helper
         from routes import flask_users
+        from routes import admin
 
         # Jinja templates
         from templates.utils import template_filters

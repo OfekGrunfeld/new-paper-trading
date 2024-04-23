@@ -15,8 +15,6 @@ from routes.utils.auth import sign_in_required, redirect_to_access_denied
 def index() -> str:
     return get_rendered_readme()
     
-@flask_app.route('/stock_dashboard', methods=['GET'])
-@flask_app.route('/stock_dashboard/', methods=['GET'])
 @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
 @sign_in_required()
 def stock_dashboard(symbol: str = None):

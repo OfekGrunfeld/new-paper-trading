@@ -5,8 +5,8 @@ class DefaultConfig:
 
     # General Config
     APP_NAME = environ.get("APP_NAME")
-    DEBUG = environ.get("FLASK_DEBUG")
-    TESTING = environ.get("FLASK_TESTING")
+    DEBUG = bool(int(environ.get("FLASK_DEBUG")))
+    TESTING = bool(int(environ.get("FLASK_TESTING")))
     SECRET_KEY =  environ.get("SECRET_KEY")
     PORT = environ.get("FLASK_PORT")
 
