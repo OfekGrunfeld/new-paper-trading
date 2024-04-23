@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+    {{ super() }} | {{ symbol }} Overview
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Portfolio Overview</h1>
+    <h2>Balance: ${{ balance }}</h2>
+    <h3>{{ symbol }} Holdings</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Shares</th>
+                <th>Cost Per Share</th>
+                <th>Total Cost</th>
+                <th>Profit Since Bought</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.timestamp|format_iso_datetime }}</td>
+                <td>{{ "%.2f"|format(transaction.shares) }}</td>
+                <td>${{ "%.2f"|format(transaction.cost_per_share) }}</td>
+                <td>${{ "%.2f"|format(transaction.shares * transaction.cost_per_share) }}</td>
+                <td>${{ "%.2f"|format(current_prices[symbol] - transaction.cost_per_share) }}</td>
+                <td>{{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) /  transaction.cost_per_share * 100) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

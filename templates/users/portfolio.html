@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ super() }} | Portfolio Overview
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Portfolio Overview</h1>
+    <h2>Balance: ${{ balance }}</h2>
+    {% for symbol, transactions in symbols.items() %}
+        <h3>{{ symbol }} Holdings</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Shares</th>
+                    <th>Total Worth</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ "%.2f"| format(total_shares[symbol]) }}</td>
+                    <td>{{ "%.2f"| format(total_worths[symbol]) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+</div>
+{% endblock %}

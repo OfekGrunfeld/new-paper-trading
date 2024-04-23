@@ -23,7 +23,25 @@ def get_symbol_info(symbol: str) -> Union[dict, None]:
     except Exception as error:
         logger.error(f"222 Tried getting info for probably non-existent symbol: {symbol}.\nError:{error}")
         return None
-    
+
+def get_current_prices_of_symbol_list(symbols: list[str]) -> dict[str, float]:
+    values = []
+    for symbol in symbols:
+        try:
+            symbol_info = get_symbol_info(symbol)
+            try:
+                current_price = symbol_info["currentPrice"]
+                values.append(current_price)
+            except Exception as error:
+                logger.error(f"Couldn't get current price for {symbol}")
+                values.append(None)
+        except Exception as error:
+            logger.error(f"Couldn't get symbol info for {symbol}")
+            values.append(None)
+            
+    return dict(zip(symbols,values))
+
+
 
 def func():
     info = yf.Ticker("aapl").info["currentPrice"]
