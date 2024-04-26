@@ -8,7 +8,7 @@ class SignUpForm(FlaskForm):
     email = EmailField("Email", validators=DefaultFormValidators.email)
     username = StringField("Username", validators=DefaultFormValidators.username)
     password = PasswordField("Password", validators=DefaultFormValidators.password)
-    repeat_password = PasswordField(label="repated_password", validators=DefaultFormValidators.password)
+    repeat_password = PasswordField(label="Repeat Password", validators=DefaultFormValidators.password)
 
 class SignInForm(FlaskForm):
     username = StringField("Username", validators=DefaultFormValidators.username)

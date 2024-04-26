@@ -3,23 +3,41 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-    {{ super() }} | Log In
+    {{ super() }} | Sign In
 {% endblock %}
 
 {% block content %}
-<div class="container theme-showcase" role="main" style="margin-top: 75px">
-    <form action="{{ url_for('sign_in') }}" method="POST">
-        {{ form.hidden_tag() }}
-        {{ wtf.form_field(form.username) }}
-        {{ wtf.form_field(form.password) }}
-        {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
-        <input type="submit" value="Sign In">
-    </form>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4 text-center">Sign In</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('sign_in') }}" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ wtf.form_field(form.username) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ wtf.form_field(form.password) }}
+                        </div>
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error }}</div>
+                        {% endif %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                Don't have an account yet? <a href="{{ url_for('sign_up') }}">Sign up</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block footer %}
-  {{ super() }} 
+    {{ super() }} 
 {% endblock %}

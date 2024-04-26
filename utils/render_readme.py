@@ -43,7 +43,7 @@ def get_rendered_readme():
         html = re.sub(r"<h([1-3])>(.+)</h\1>", replace_heading, html)
 
         return render_template(
-            "index.html",
+            "misc/readme.html",
             content=Markup(html),
             styles=Markup(styles),
         )

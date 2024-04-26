@@ -6,13 +6,20 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container pb-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-      <div class="col-auto col-md-10">
-        {{ content }}
-      </div>
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="img-fluid" style="max-height: 300px;">
+            </div>
+            <h2 class="mb-4 text-center">Welcome to O.G Papertrading</h2>
+            <p class="lead text-center">This is the homepage of my project. Feel free to explore!</p>
+            <div class="text-center mt-4">
+                <a href="{{ url_for('readme') }}" class="btn btn-primary btn-lg">View README</a>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}
 
 {% block footer %}

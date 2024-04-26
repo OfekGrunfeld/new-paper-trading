@@ -1,40 +1,50 @@
 {% extends "base.html" %}
 
 {% block title %}
-
-    {{ super() }} | {{ symbol }} Overview
+    {{ super() }} | Symbol Overview
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>Portfolio Overview</h1>
-    <h2>Balance: ${{ balance }}</h2>
-    <h3>{{ symbol }} Holdings</h3>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Shares</th>
-                <th>Bough at </th>
-                <th>Total Worth</th>
-                <th>Profit Per Share Since Bought</th>
-                <th>Total Profit Since Bought</th>
-                <th>Profit Percentage</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-            <tr>
-                <td>{{ transaction.timestamp|format_iso_datetime }}</td>
-                <td>{{ "%.2f"|format(transaction.shares) }}</td>
-                <td>${{ "%.2f"|format(transaction.cost_per_share) }}</td>
-                <td>${{ "%.2f"|format(transaction.shares * transaction.cost_per_share) }}</td>
-                <td>${{ "%.2f"|format(current_prices[symbol] - transaction.cost_per_share) }}</td>
-                <td>${{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) * transaction.shares) }}</td>
-                <td>{{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) /  transaction.cost_per_share * 100) }}%</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Symbol Details -->
+    <div class="mb-4">
+        <div class="mt-3">
+            <div class="bg-3 py-3 px-3 rounded">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">{{ symbol }} Summary</h2>
+                    <a href="/my/portfolio" class="btn btn-primary symbol-button">Back to Portfolio</a>
+                </div>
+            </div>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Shares</th>
+                            <th>Share Price</th>
+                            <th>Total Cost</th>
+                            <th>Profit Per Share Since Bought</th>
+                            <th>Total Profit Since Bought</th>
+                            <th>Profit Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.timestamp|format_iso_datetime }}</td>
+                            <td>{{ "%.2f"|format(transaction.shares) }}</td>
+                            <td>${{ "%.2f"|format(transaction.cost_per_share) }}</td>
+                            <td>${{ "%.2f"|format(transaction.shares * transaction.cost_per_share) }}</td>
+                            <td>${{ "%.2f"|format(current_prices[symbol] - transaction.cost_per_share) }}</td>
+                            <td>${{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) * transaction.shares) }}</td>
+                            <td>{{ "%.2f"|format((current_prices[symbol] - transaction.cost_per_share) / transaction.cost_per_share * 100) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

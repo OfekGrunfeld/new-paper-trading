@@ -1,38 +1,63 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<!-- Navigation bar -->
+<nav class="navbar fixed-top navbar-expand-lg bg-1 navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">{{ config['APP_NAME'] }}</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Brand name and logo -->
+    <a class="navbar-brand" href="/">
+      {{ config['APP_NAME'] }}
+    </a>
+    <!-- END -->
+    
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-             aria-haspopup="true" aria-expanded="false">
-            Dash Demo Apps
+          <a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+             Data
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div class="dropdown-menu">
             <a class="dropdown-item" href="/demo/">Simple Demo</a>
             <a class="dropdown-item" href="/iris-k-means/">Iris k-means clustering</a>
             <a class="dropdown-item" href="/crossfilter-example/">Crossfilter example</a>
           </div>
         </li>
       </ul>
+
+      <!-- Navigation bar links -->
       <ul class="navbar-nav">
-        {% if session.username %}
+        {% if config.DEBUG %}
         <li class="nav-item">
-          <p>Username: {{ session.username }}</p>
+          <a class="nav-link" href="/routes">
+            <i class="fa-solid fa-bezier-curve"></i>
+            Routes
+          </a>
         </li>
         {% endif %}
         <li class="nav-item">
-          <a target="_blank" rel="noopener" class="nav-link" href="https://github.com/tzelleke/flask-dash-app"><i
-              class="fab fa-github"></i> GitHub</a>
+          <a class="nav-link" href="/stock_dashboard">
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+          </a>
         </li>
-        <li class="nav-item">
-          <a target="_blank" rel="noopener" class="nav-link" href="https://twitter.com/tzelleke/"><i
-              class="fab fa-twitter"></i> Twitter</a>
-        </li>
+        {% if session.username %}
+          <li class="nav-item">
+            <a class="nav-link" href="/my/portfolio">
+              <i class="fas fa-chart-pie"></i>
+              Portfolio
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/my/dashboard">
+              <i class="fa-regular fa-user"></i>
+              {{ session.username }}
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/sign_up">
+              <i class="fa-regular fa-user"></i>
+              Sign Up | In
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>

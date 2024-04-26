@@ -1,0 +1,32 @@
+body {
+    padding-top: 90px;
+}
+:root {
+    --color-1: #386C5F;
+    --color-2: #FFD700;
+    --color-3: #BADEA9;
+    --color-4: #436436;
+}
+
+
+
+.bg-1 {
+    background-color: var(--color-1);
+}
+
+.bg-2 {
+    background-color: var(--color-2);
+}
+
+.bg-3 {
+    background-color: var(--color-3);
+    color: var(--color-2)
+}
+.bg-4 {
+    background-color: var(--color-4);
+}
+
+.btn-primary {
+    background-color: var(--color-4);
+}
+
