@@ -1,9 +1,9 @@
-from flask import session
-
 from typing import Union, Any
 import requests
 from urllib3.exceptions import MaxRetryError
 import traceback
+
+from flask import session
 
 from utils import logger
 from utils.env_variables import EnvironmentVariables

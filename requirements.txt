@@ -1,5 +1,17 @@
-wtforms[email]
-flask-wtf
-
-itsdangerous == 2.12
-flask-session == 0.8.0
+Flask==3.0.2
+flask-session==0.8.0
+itsdangerous==2.2.0
+wtforms[email]==3.1.2
+Flask-WTF==1.2.1
+Markdown==3.6
+MarkupSafe==2.1.4
+Pygments==2.17.2
+yfinance==0.2.36
+urllib3==2.1.0
+requests==2.31.0
+dash==2.16.1
+dash-bootstrap-components==1.5.0
+plotly==5.20.0
+cryptography==42.0.5
+Flask-Bootstrap==3.3.7.1
+python-dotenv==1.0.1
