@@ -1,3 +1,4 @@
+from datetime import timedelta
 from requests import Response
 from typing import List, Dict, Union
 from collections import defaultdict
@@ -8,16 +9,30 @@ from flask import current_app as flask_app
 from flask import render_template, redirect, session, request
 from flask.helpers import url_for
 
-from forms.userbase_logic import SignUpForm, SignInForm, UpdateUserForm
+# Modules
 from utils.render_readme import get_rendered_readme 
 from utils.logger_script import logger
 from utils.yfinance_helper import get_current_prices_of_symbol_list, get_symbol_info
-from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
-from comms.communications import get_sign_up_response, get_sign_in_response, get_user_database_table, get_update_user_response, submit_order, get_portfolio
-from routes.utils.auth import sign_in_required, redirect_to_access_denied
 
+from forms.userbase_logic import SignUpForm, SignInForm, UpdateUserForm
+from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
+
+from comms.communications import get_sign_up_response, get_sign_in_response, get_user_database_table, get_update_user_response, submit_order, get_portfolio
+
+from routes.utils.auth import _signed_in, sign_in_required, redirect_to_access_denied
 from routes.dash_routes import shares_graph, worths_graph
 
+
+
+
+@flask_app.before_request
+def make_session_permanent():
+    session.permanent = True
+    flask_app.permanent_session_lifetime = timedelta(days=1)
+
+    username = _signed_in()
+    if not username:
+        return
 @flask_app.route("/", methods=["GET"])
 def index() -> str:
     return render_template(
@@ -177,7 +192,6 @@ def portfolio(symbol: str = None):
     
     return redirect(url_for('index'))
 
-
 @flask_app.route("/sign_in", methods=["GET", "POST"])
 def sign_in() -> str:
     form = SignInForm()
@@ -264,31 +278,6 @@ def sign_out():
 def profile_dashboard():
     return render_template("users/profile_dashboard.html")
 
-@flask_app.route('/my/data/<database_name>', methods=['GET'])
-@sign_in_required()
-def database_data(database_name: str):
-    # add check to see if it's one of databases which are supported
-    # add proper logic for redirecting and such
-    response = get_user_database_table(database_name=database_name)
-
-    if isinstance(response, Response):
-        try:
-            response_json: dict = response.json()
-            if response_json["success"] is True:
-                logger.info(f"Outputting transaction history to html...")
-                return render_template(
-                    "users/view_user_database_table.html", 
-                    database_name=database_name.capitalize(),
-                    username=session["username"],
-                    records=response_json["data"]
-                )
-            else:
-                logger.error(f"Failed getting user's transaction history")
-                return redirect(f"{url_for('/my/dashboard')}")
-        except Exception as error:
-            logger.error(f"Got bad response from other server: {error}")
-            return redirect(f"{url_for(f'profile_dashboard')}")
-
 @flask_app.route('/update_user', methods=['GET', 'POST'])
 def update_user():
     update_form = UpdateUserForm()
@@ -325,6 +314,4 @@ def update_user():
         logger.error(f"Update of user {session["username"]} failed")
 
     return render_template('users/update_user.html', update_form=UpdateUserForm())
-        
-
-    
+         

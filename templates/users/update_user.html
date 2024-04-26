@@ -16,27 +16,37 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Update User Information</h2>
-    <form action="{{ url_for('update_user') }}" id="updateForm" method="POST">
-        {{ update_form.hidden_tag() }}
-        <div class="form-group">
-            {{ wtf.form_field(update_form.password) }}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4 text-center">Update User Information</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('update_user') }}" id="updateForm" method="POST" class="needs-validation" novalidate>
+                        {{ update_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ wtf.form_field(update_form.password) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ wtf.form_field(update_form.attribute_to_update) }}
+                        </div>
+                        <div class="mb-3" id="emailField">
+                            {{ wtf.form_field(update_form.new_email) }}
+                        </div>
+                        <div class="mb-3" id="usernameField">
+                            {{ wtf.form_field(update_form.new_username) }}
+                        </div>
+                        <div class="mb-3" id="passwordField">
+                            {{ wtf.form_field(update_form.new_password) }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Update User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            {{ wtf.form_field(update_form.attribute_to_update) }}
-        </div>
-        <div class="form-group" id="emailField">
-            {{ wtf.form_field(update_form.new_email) }}
-        </div>
-        <div class="form-group" id="usernameField">
-            {{ wtf.form_field(update_form.new_username) }}
-        </div>
-        <div class="form-group" id="passwordField">
-            {{ wtf.form_field(update_form.new_password) }}
-        </div>
-        <input type="submit" value="Update User">
-    </form>
+    </div>
 </div>
 {% endblock %}
 
