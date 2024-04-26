@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+
 {% block meta %}
   {{ super() }}
   {{ metas }}
@@ -8,6 +9,9 @@
 {% block styles %}
   {{ super() }}
   {{ css }}
+{% endblock %}
+
+{% block navbar %}
 {% endblock %}
 
 {% block content %}
@@ -19,4 +23,7 @@
   {{ dash_config }}
   {{ scripts }}
   {{ renderer }}
+{% endblock %}
+
+{% block footer %}
 {% endblock %}

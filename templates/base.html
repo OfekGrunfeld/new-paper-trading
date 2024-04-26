@@ -22,9 +22,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/defaults.css') }}">
   <title>{% block title %}{{ config['APP_NAME'] }}{% endblock %}</title>
 </head>
-<body>
 
-{% include 'partials/navbar.html' %}
+<body>
+{% block navbar %}
+  {% include 'partials/navbar.html' %}
+{% endblock %}
+
 <div id="main">
   {% block content %}
   {% endblock %}

@@ -1,8 +1,7 @@
-from flask import Flask
 from flask import current_app as flask_app
 
-from flask_dash import crossfilter_example, demo, iris_kmeans
+from flask_dash.graphs import DashPieChart
 
-app: Flask = demo.init_flask_dash_app(flask_app)
-app: Flask = iris_kmeans.init_flask_dash_app(flask_app)
-app: Flask = crossfilter_example.init_flask_dash_app(flask_app)
+# The following components are actually routes in the website and used as iFrames
+shares_graph = DashPieChart(flask_app, r"/my/portfolio/graphs/shares/")
+worths_graph = DashPieChart(flask_app, r"/my/portfolio/graphs/worths/")

@@ -16,6 +16,8 @@ from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
 from comms.communications import get_sign_up_response, get_sign_in_response, get_user_database_table, get_update_user_response, submit_order, get_portfolio
 from routes.utils.auth import sign_in_required, redirect_to_access_denied
 
+from routes.dash_routes import shares_graph, worths_graph
+
 @flask_app.route("/", methods=["GET"])
 def index() -> str:
     return render_template(
@@ -130,6 +132,10 @@ def portfolio(symbol: str = None):
                     for key_symbol, shares in total_shares.items():
                         total_worths[key_symbol] = shares * current_prices[key_symbol]
                     
+                    # Create pie charts for use in jinja template
+                    shares_graph.change_page_layout(total_shares)
+                    worths_graph.change_page_layout(total_worths)
+
                     return render_template(
                         "users/portfolio.html",
                         balance=response_json["data"]["balance"],
