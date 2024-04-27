@@ -9,9 +9,23 @@
       width: 80%;
     }
     .card {
-      height: calc(100% - 1rem); /* Adjust for card padding */
+      height: calc(100% - 1rem);
+    }
+    .card2 {
+      height: calc(18% - 1rem)
+    }
+    .card3 {
+      height: auto;
+    }
+    .form-group.hidden {
+      display: none;
     }
   </style>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/tradeForm.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -50,69 +64,82 @@
       <!-- Trade Form -->
       <div class="card bg-light shadow mb-4">
         <div class="card-body">
-          <!-- Symbol Selection Form BEGIN -->
           <h2 class="card-title">Trade Form</h2>
-          <form method="POST" class="mb-4">
-            {{ symbol_form.hidden_tag() }}
-            <div class="input-group">
-              {{ symbol_form.symbol(class='form-control', placeholder='Enter Stock Symbol, e.g., AAPL') }}
-              <button type="submit" class="btn btn-primary">View Stock</button>
+          <!-- Symbol Selection Form BEGIN -->
+          <div class="card2 bg-light shadow mb-4">
+            <div class="card-body">
+              <h3> Pick A Symbol</h3>
+              <form method="POST" class="mb-4">
+                {{ symbol_form.hidden_tag() }}
+                <div class="input-group">
+                  {{ symbol_form.symbol(class='form-control', placeholder='Enter Stock Symbol, e.g., AAPL') }}
+                  <button type="submit" class="btn btn-primary">View Stock</button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
           <!-- Symbol Selection Form END -->
+
           <!-- Trade Form -->
-          <form method="POST">
-            {{ trade_form.hidden_tag() }}
-            <div class="mb-3">
-              <label for="symbol" class="form-label">Symbol</label>
-              <input type="text" class="form-control" id="symbol" value="{{ symbol }}" readonly>
-            </div>
-            {% if bid and ask %}
-            <div class="mb-3 text-center">
-              <div class="row">
-                <div class="col">
-                  <div class="bg-success text-white p-2 rounded">
-                    Bid {{ bid }}
+          <div class="card3 bg-light shadow mb-4">
+            <div class="card-body">
+              <form method="POST">
+                {{ trade_form.hidden_tag() }}
+                <div class="mb-3">
+                  <h3>Chosen Symbol: {{ symbol }}</h3>
+                </div>
+                {% if bid and ask %}
+                  <div class="mb-3 text-center">
+                    <div class="row">
+                      <div class="col">
+                        <div class="bg-success text-white p-2 rounded">
+                          Bid {{ bid }}
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="bg-info text-white p-2 rounded">
+                          Spread {{ "%.2f"|format(ask - bid) }}
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="bg-danger text-white p-2 rounded">
+                          Ask {{ ask }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                <div class="form-group mb-3">
+                  {{ wtf.form_field(trade_form.side, class="form-select") }}
+                </div>
+                <div class="form-group mb-3">
+                  {{ wtf.form_field(trade_form.order_type, class="form-select") }}
+                </div>
+                <div class="form-group mb-3">
+                  {{ wtf.form_field(trade_form.shares, class="form-control") }}
+                </div>
+                <div class="form-group mb-3 limit-price-field hidden">
+                  {{ wtf.form_field(trade_form.limit_price) }}
+                </div>
+                <div class="form-group mb-3 stop-price-field hidden">
+                  {{ wtf.form_field(trade_form.stop_price) }}
+                </div>
+                <div class="form-group mb-3">
+                  <div class="form-check">
+                    {{ wtf.form_field(trade_form.stop_loss_check, class="form-check-input") }}
+                  </div>
+                  <div class="form-check">
+                    {{ wtf.form_field(trade_form.take_profit_check, class="form-check-input") }}
                   </div>
                 </div>
-                <div class="col">
-                  <div class="bg-info text-white p-2 rounded">
-                    Spread {{ "%.2f"|format(ask - bid) }}
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="bg-danger text-white p-2 rounded">
-                    Ask {{ ask }}
-                  </div>
-                </div>
-              </div>
+                {% if trade_feedback %}
+                  <div class="alert alert-danger">{{ trade_feedback }}</div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary" id="trade_form_submit">Trade</button>
+              </form>
+              <!-- End Trade Form -->
             </div>
-            {% endif %}
-            <div class="mb-3">
-              {{ wtf.form_field(trade_form.side, class="form-select") }}
-            </div>
-            <div class="mb-3">
-              {{ wtf.form_field(trade_form.order_type, class="form-select") }}
-            </div>
-            <div class="mb-3">
-              {{ wtf.form_field(trade_form.shares, class="form-control") }}
-            </div>
-            <div class="mb-3">
-              <div class="form-check">
-                {{ wtf.form_field(trade_form.stop_loss_check, class="form-check-input") }}
-                <label class="form-check-label" for="stopLossCheck">Stop Loss</label>
-              </div>
-              <div class="form-check">
-                {{ wtf.form_field(trade_form.take_profit_check, class="form-check-input") }}
-                <label class="form-check-label" for="takeProfitCheck">Take Profit</label>
-              </div>
-            </div>
-            {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
-            <button type="submit" class="btn btn-primary">Trade</button>
-          </form>
-          <!-- End Trade Form -->
+          </div> 
         </div>
       </div>
     </div>

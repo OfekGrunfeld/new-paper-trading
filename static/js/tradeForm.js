@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const stopPriceField = document.querySelector('.stop-price-field');
   const limitPriceInput = document.getElementById('limit_price');
   const stopPriceInput = document.getElementById('stop_price');
-  const tradeButton = document.querySelector('#tradeForm button[type="submit"]');
+  const tradeButton = document.getElementById('trade_form_submit');
 
   function updateVisibility(selectedOrderType) {
     limitPriceField.classList.add('hidden');

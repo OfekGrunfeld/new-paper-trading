@@ -15,7 +15,7 @@ class SignInForm(FlaskForm):
     password = PasswordField("Password", validators=DefaultFormValidators.password)
 
 class UpdateUserForm(FlaskForm):
-    password = PasswordField("Current Password", validators=[DataRequired()])
+    password = PasswordField("Password", validators=DefaultFormValidators.password)
     attribute_to_update = SelectField(
         "Update Field", 
         choices=[('email', 'Email'), ('username', 'Username'), ('password', 'Password')], 

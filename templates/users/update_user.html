@@ -22,23 +22,26 @@
             <h2 class="mb-4 text-center">Update User Information</h2>
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ url_for('update_user') }}" id="updateForm" method="POST" class="needs-validation" novalidate>
-                        {{ update_form.hidden_tag() }}
+                    <form action="{{ url_for('update_user') }}" id="updateForm" method="POST">
+                        {{ form.hidden_tag() }}
                         <div class="mb-3">
-                            {{ wtf.form_field(update_form.password) }}
+                            {{ wtf.form_field(form.password) }}
                         </div>
                         <div class="mb-3">
-                            {{ wtf.form_field(update_form.attribute_to_update) }}
+                            {{ wtf.form_field(form.attribute_to_update) }}
                         </div>
                         <div class="mb-3" id="emailField">
-                            {{ wtf.form_field(update_form.new_email) }}
+                            {{ wtf.form_field(form.new_email) }}
                         </div>
                         <div class="mb-3" id="usernameField">
-                            {{ wtf.form_field(update_form.new_username) }}
+                            {{ wtf.form_field(form.new_username) }}
                         </div>
                         <div class="mb-3" id="passwordField">
-                            {{ wtf.form_field(update_form.new_password) }}
+                            {{ wtf.form_field(form.new_password) }}
                         </div>
+                        {% if feedback %}
+                            <div class="alert alert-danger">{{ feedback }}</div>
+                        {% endif %}
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">Update User</button>
                         </div>

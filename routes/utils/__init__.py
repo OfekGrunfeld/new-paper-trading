@@ -1,2 +1,3 @@
-__all__ = ["auth"]
+__all__ = ["auth", "user_feedbacks"]
+from . import *
 

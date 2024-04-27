@@ -45,8 +45,9 @@ def get_response(endpoint: str, method: str, data_to_send: dict = {}) -> dict:
             response = method_func(url, params=encrypted_data, verify=False, timeout=5)
         
         try:
-            logger.warning(f"Response text: {response.text}")
+            logger.debug(f"Got response from fastAPI server: {response.status_code}")
             response_json: dict = response.json()
+            logger.debug(f"Data: {response_json}")
             return response_json 
         except Exception as error:
             logger.error(f"Failed to get json of response")

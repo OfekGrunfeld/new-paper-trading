@@ -27,8 +27,8 @@
                         <div class="mb-3">
                             {{ wtf.form_field(form.repeat_password) }}
                         </div>
-                        {% if error %}
-                            <div class="alert alert-danger">{{ error }}</div>
+                        {% if feedback %}
+                            <div class="alert alert-danger">{{ feedback }}</div>
                         {% endif %}
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
