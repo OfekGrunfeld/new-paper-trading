@@ -1,12 +1,12 @@
 import os
 from base64 import b64encode, b64decode
+import json
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-import json
-from utils import DefaultConfig
-import traceback
 
-from utils import logger
+from utils.env_variables import SECRET_KEY
+from utils.logger_script import logger
 
 backend = default_backend()
 
@@ -27,7 +27,7 @@ def pad_binary_data(binary_data: bytes) -> bytes:
         padding_length = block_size - (len(binary_data) % block_size)
         return binary_data + b"\0" * padding_length
     except Exception as error:
-        logger.critical(traceback.format_exc())
+        logger.error(f"Error padding data. Error: {error}")
 
 
 def encrypt(data) -> str:
@@ -47,7 +47,11 @@ def encrypt(data) -> str:
     padded_data = pad_binary_data(binary_data)
     iv = os.urandom(16)  # The initialization vector (IV) must be unpredictable
 
-    cipher = Cipher(algorithms.AES(b64decode(DefaultConfig.SECRET_KEY)), modes.CBC(iv), backend=backend)
+    cipher = Cipher(
+        algorithms.AES(b64decode(SECRET_KEY)), 
+        modes.CBC(iv), 
+        backend=backend
+    )
     encryptor = cipher.encryptor()
     encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
 
