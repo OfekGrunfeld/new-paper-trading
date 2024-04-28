@@ -42,7 +42,7 @@ def readme() -> str:
 
 @flask_app.route('/stock_dashboard/', methods=['GET', 'POST'])    
 @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
-@sign_in_required()
+# @sign_in_required()
 def stock_dashboard(symbol: str = None):
     if symbol is None:
         return redirect(f"{url_for('stock_dashboard')}/AAPL")
@@ -201,14 +201,15 @@ def portfolio(symbol: str = None):
 
 @flask_app.route('/my/dashboard')
 @sign_in_required()
-def profile_dashboard():
-    return render_template("users/profile_dashboard.html")
+def profile():
+    return render_template("users/profile.html")
 
 # Fully Complete
 @flask_app.route("/sign_in", methods=["GET", "POST"])
 def sign_in() -> str:
     sign_in_form = SignInForm()
     keep_form_data = True
+    redirect_profile = False
 
     if request.method == "POST" and sign_in_form.validate_on_submit():
         # Communicate with fastAPI server to sign in the user
@@ -231,6 +232,7 @@ def sign_in() -> str:
                 logger.debug(f"User {sign_in_form.username.data} sign in has been successful")
                 feedback = "Sign In Has Been Successful"
                 keep_form_data = False
+                redirect_profile = True
             else:
                 logger.error(f"User {sign_in_form.username.data} sign in has failed")
                 feedback = response["error"]
@@ -255,7 +257,8 @@ def sign_in() -> str:
     return render_template(
         "users/sign_in.html", 
         form=sign_in_form,
-        feedback=feedback
+        feedback=feedback,
+        redirect_profile=redirect_profile
     )
 
 # Fully Complete
@@ -264,6 +267,7 @@ def sign_up():
     sign_up_form = SignUpForm()
     feedback = None
     keep_form_data = True
+    redirect_home = False
 
     if request.method == "POST" and sign_up_form.validate_on_submit() and sign_up_form.password.data == sign_up_form.repeat_password.data:
         # Communicate with fastAPI server to regiter the user
@@ -277,6 +281,7 @@ def sign_up():
                 logger.debug(f"User {sign_up_form.username.data} sign up has been successful")
                 feedback = "User Sign Up Has Been Successful"
                 keep_form_data = False
+                redirect_home = True
             else:
                 logger.error(f"User {sign_up_form.username.data} sign up has failed")
                 feedback = response["error"]
@@ -305,7 +310,8 @@ def sign_up():
     return render_template(
         "users/sign_up.html", 
         form=sign_up_form,
-        feedback=feedback
+        feedback=feedback,
+        redirect_home=redirect_home
     )
 
 @flask_app.route('/sign_out')

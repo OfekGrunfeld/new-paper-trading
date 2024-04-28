@@ -2,7 +2,6 @@ from flask.sessions import SessionInterface, SessionMixin
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 from werkzeug.datastructures import CallbackDict
 
-
 class ItsdangerousSession(CallbackDict, SessionMixin):
 
     def __init__(self, initial=None):
@@ -10,7 +9,6 @@ class ItsdangerousSession(CallbackDict, SessionMixin):
             self.modified = True
         CallbackDict.__init__(self, initial, on_update)
         self.modified = False
-
 
 class ItsdangerousSessionInterface(SessionInterface):
     salt = 'cookie-session'

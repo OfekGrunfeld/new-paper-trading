@@ -2,6 +2,13 @@
 
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block meta %}
+    {{ super() }}
+    {% if redirect_home %}
+        <meta http-equiv="refresh" content="3; url={{ url_for('index') }}" />
+    {% endif %}
+{% endblock %}
+
 {% block title %}
     {{ super() }} | Sign Up
 {% endblock %}

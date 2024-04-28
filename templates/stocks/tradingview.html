@@ -1,0 +1,27 @@
+<!-- TradingView Widget -->
+<div class="card tv-card bg-light shadow mb-4">
+    <div class="card-body">
+        <h2 class="card-title">Stock Market Dashboard</h2>
+        <!-- TradingView Widget BEGIN -->
+        <div class="tradingview-widget-container ">
+            <div class="tradingview-widget-container__widget"></div>
+            <!-- Important -->
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+            {
+                "autosize": true,
+                "symbol": "{{ symbol }}",
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": "light",
+                "style": "1",
+                "locale": "en",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "calendar": false,
+                "support_host": "https://www.tradingview.com"
+            }
+            </script>
+        </div>
+        <!-- TradingView Widget END -->
+    </div>
+</div>

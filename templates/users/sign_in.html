@@ -6,6 +6,13 @@
     {{ super() }} | Sign In
 {% endblock %}
 
+{% block meta %}
+    {{ super() }}
+    {% if redirect_profile %}
+        <meta http-equiv="refresh" content="3; url={{ url_for('profile') }}" />
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
