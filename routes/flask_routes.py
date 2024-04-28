@@ -98,7 +98,7 @@ def stock_dashboard(symbol: str = None):
             except InternalError:
                 logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
                 trade_feedback = UserFeedbacks.internal_error.value
-            except KeyError:
+            except KeyError as error:
                 logger.error(f"Got bad response from other server: {error}")
                 trade_feedback = UserFeedbacks.internal_error.value
             except Exception as error:
@@ -239,7 +239,7 @@ def sign_in() -> str:
         except InternalError as error:
             logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
             feedback = UserFeedbacks.internal_error.value
-        except KeyError:
+        except KeyError as error:
             logger.error(f"Got bad response from other server: {error}")
             feedback = UserFeedbacks.internal_error.value
         except Exception as error:
@@ -289,7 +289,7 @@ def sign_up():
             logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
             feedback = UserFeedbacks.internal_error.value
             keep_form_data = True
-        except KeyError:
+        except KeyError as error:
             logger.error(f"Got bad response from other server: {error}")
             feedback = UserFeedbacks.internal_error.value
             keep_form_data = True
@@ -358,7 +358,7 @@ def update_user():
             except InternalError as error:
                 logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
                 feedback = UserFeedbacks.internal_error.value
-            except KeyError:
+            except KeyError as error:
                 logger.error(f"Got bad response from other server: {error}")
                 feedback = UserFeedbacks.internal_error.value
             except Exception as error:
