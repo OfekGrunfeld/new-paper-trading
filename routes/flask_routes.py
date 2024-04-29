@@ -241,6 +241,9 @@ def profile():
 # Fully Complete
 @flask_app.route("/sign_in", methods=["GET", "POST"])
 def sign_in() -> str:
+    if _signed_in():
+        return redirect_to_access_denied(reason="You are already signed in")
+    
     sign_in_form = SignInForm()
     keep_form_data = True
     redirect_profile = False

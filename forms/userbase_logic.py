@@ -19,7 +19,8 @@ class UpdateUserForm(FlaskForm):
     attribute_to_update = SelectField(
         "Update Field", 
         choices=[('email', 'Email'), ('username', 'Username'), ('password', 'Password')], 
-        validators=[DataRequired()]
+        validators=[DataRequired()],
+        option_widget="Select"
     )
     new_email = EmailField("Email", validators=DefaultFormValidators.new_email)
     new_username = StringField("Username", validators=DefaultFormValidators.new_username)
