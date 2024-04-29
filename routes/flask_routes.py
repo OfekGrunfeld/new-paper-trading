@@ -21,6 +21,10 @@ from routes.utils.auth import _signed_in, sign_in_required, redirect_to_access_d
 from routes.dash_routes import shares_graph, worths_graph
 
 class InternalError(Exception):
+    """
+    Internal Errors are raised when the FastAPI server 
+    returns data that this backend did not expect.
+    """
     pass
 
 @flask_app.before_request
@@ -147,8 +151,7 @@ def portfolio(symbol: str = None):
             if symbol is None:
                 symbols: dict[str, list[dict[str, Union[str, float]]]]= response["data"]["symbols"]           
 
-                # Calculate the total shares for each symbol      
-                # key = symbol   
+                # Calculate the total shares for each symbol                     
                 total_shares: dict[str, float] = defaultdict(float)
                 for key_symbol, transactions in symbols.items():
                     for transaction in transactions:
@@ -198,6 +201,37 @@ def portfolio(symbol: str = None):
         logger.error(f"Got bad response from own server: {error}")
     
     return redirect(url_for('index'))
+
+@flask_app.route('/my/database/<database_name>', methods=["GET"])
+def view_database(database_name: str):
+    if database_name not in ["transactions", "portfolios"]:
+        return redirect_to_access_denied(reason="Invalid Database Name")
+    else:        
+        # Get database without secret database information
+        response = get_response(endpoint=f"{FastAPIRoutes.get_database.value}/{database_name}", method="get")
+            
+        try:                
+            if response["success"] is True:
+                logger.info(f"Outputting {database_name} database to html...")
+                return render_template(
+                    "users/view_database.html", 
+                    database_name=database_name.capitalize(),
+                    records=response["data"]
+                )
+            else:
+                logger.error(f"Failed getting user's transaction history")
+                feedback = UserFeedbacks.internal_error.value
+        except InternalError as error:
+            logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
+            feedback = UserFeedbacks.internal_error.value
+        except KeyError as error:
+            logger.error(f"Got bad response from other server: {error}")
+            feedback = UserFeedbacks.internal_error.value
+        except Exception as error:
+            logger.error(f"Error: {error}")
+            feedback = UserFeedbacks.internal_error.value
+
+    return redirect_to_access_denied(reason=feedback)
 
 @flask_app.route('/my/dashboard')
 @sign_in_required()
@@ -320,10 +354,11 @@ def sign_out():
     session.pop("username", None)
     session.pop("password", None)
     session.pop("uuid", None)
+    session.pop("email", None)
 
     return redirect(url_for("index"))
 
-
+# Fully Complete
 @flask_app.route('/update_user', methods=['GET', 'POST'])
 def update_user():
     update_form = UpdateUserForm()

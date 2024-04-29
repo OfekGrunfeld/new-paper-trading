@@ -18,10 +18,11 @@ class FastAPIRoutes(Enum):
     update_user = "update" # add attribute to update at the end
     submit_order = "submit_order"
     get_portfolio ="get_user/summary"
+    get_database = "get_user/database"
 
 def get_response(endpoint: str, method: str, data_to_send: dict = {}) -> dict:
     try:
-        routes_that_need_uuid = [FastAPIRoutes.get_portfolio.value, FastAPIRoutes.submit_order.value, FastAPIRoutes.update_user.value]
+        routes_that_need_uuid = [FastAPIRoutes.get_portfolio.value, FastAPIRoutes.submit_order.value, FastAPIRoutes.update_user.value, FastAPIRoutes.get_database.value]
         # Add uuid for special endpoints
         if any(endpoint.startswith(route) for route in routes_that_need_uuid):
             data_to_send["uuid"] = session["uuid"]
@@ -52,6 +53,22 @@ def get_response(endpoint: str, method: str, data_to_send: dict = {}) -> dict:
         except Exception as error:
             logger.error(f"Failed to get json of response")
             return None
+    except MaxRetryError as error:
+        logger.error(f"Got too many retries for server: {error}")
+        return {"internal_error": error}
+    except Exception as error:
+        logger.error(f"Got unexpected error: {error}")
+        return {"internal_error": error}\
+        
+def get_user_database_table(database_name: str):
+    try:
+        response: requests.Response = requests.get(
+            url=f"{FASTAPI_SERVER_URL}/get_user_database_table/{database_name}",
+            params={"uuid": encrypt(session["uuid"])},
+            verify=False,
+            timeout=5
+        )
+        return response
     except MaxRetryError as error:
         logger.error(f"Got too many retries for server: {error}")
         return {"internal_error": error}
