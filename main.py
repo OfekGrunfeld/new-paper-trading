@@ -26,7 +26,11 @@ flask_app: Flask = create_app()
 flask_port = flask_app.config.get("PORT", 5000)
     
 def run_flask():
-    flask_app.run(host="0.0.0.0", port=flask_port)
+    flask_app.run(
+        host="0.0.0.0", 
+        port=flask_port, 
+        ssl_context=("./https/cert.pem", "./https/key.pem")
+    )
 
 if __name__ == "__main__":
     run_flask()
