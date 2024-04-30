@@ -1,9 +1,10 @@
+from typing import override
+
 from flask.sessions import SessionInterface, SessionMixin
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 from werkzeug.datastructures import CallbackDict
 
 class ItsdangerousSession(CallbackDict, SessionMixin):
-
     def __init__(self, initial=None):
         def on_update(self):
             self.modified = True
@@ -20,6 +21,7 @@ class ItsdangerousSessionInterface(SessionInterface):
         return URLSafeTimedSerializer(app.secret_key,
                                       salt=self.salt)
 
+    @override
     def open_session(self, app, request):
         s = self.get_serializer(app)
         if s is None:
@@ -33,7 +35,8 @@ class ItsdangerousSessionInterface(SessionInterface):
             return self.session_class(data)
         except BadSignature:
             return self.session_class()
-        
+    
+    @override
     def save_session(self, app, session, response):
         domain = self.get_cookie_domain(app)
         if not session:

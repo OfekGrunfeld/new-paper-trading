@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Union, Any
 import requests
 from urllib3.exceptions import MaxRetryError
-import traceback
 
 from flask import session
 
@@ -21,7 +20,29 @@ class FastAPIRoutes(Enum):
     get_database = "get_user/database"
 
 def get_response(endpoint: str, method: str, data_to_send: dict = {}) -> dict:
+    """
+    Sends a request to a specified endpoint on the FastAPI server using an HTTP method and data provided,
+    handling session-specific parameters, encryption of data, and response management.
+
+    Args:
+        endpoint (str): The endpoint of the FastAPI server to which the request is sent.
+        method (str): The HTTP method to be used for the request. Acceptable methods are 'get', 'post', 'put', and 'delete'.
+        data_to_send (dict, optional): A dictionary of the data to send to the endpoint. Default is an empty dictionary.
+
+    Returns:
+        dict: A dictionary containing the JSON response from the server if the request is successful, or
+            an error dictionary if an exception occurs.
+
+    Raises:
+        ValueError: If an unsupported HTTP method is specified.
+        HTTPException: If the request fails for reasons such as network errors or server-side issues.
+
+    Notes:
+        - The function automatically handles encryption of the data sent based on predefined requirements.
+        - It also manages specific routing and parameter inclusion for certain types of requests identified by their endpoints.
+    """
     try:
+        
         routes_that_need_uuid = [FastAPIRoutes.get_portfolio.value, FastAPIRoutes.submit_order.value, FastAPIRoutes.update_user.value, FastAPIRoutes.get_database.value]
         # Add uuid for special endpoints
         if any(endpoint.startswith(route) for route in routes_that_need_uuid):
@@ -53,22 +74,6 @@ def get_response(endpoint: str, method: str, data_to_send: dict = {}) -> dict:
         except Exception as error:
             logger.error(f"Failed to get json of response")
             return None
-    except MaxRetryError as error:
-        logger.error(f"Got too many retries for server: {error}")
-        return {"internal_error": error}
-    except Exception as error:
-        logger.error(f"Got unexpected error: {error}")
-        return {"internal_error": error}\
-        
-def get_user_database_table(database_name: str):
-    try:
-        response: requests.Response = requests.get(
-            url=f"{FASTAPI_SERVER_URL}/get_user_database_table/{database_name}",
-            params={"uuid": encrypt(session["uuid"])},
-            verify=False,
-            timeout=5
-        )
-        return response
     except MaxRetryError as error:
         logger.error(f"Got too many retries for server: {error}")
         return {"internal_error": error}

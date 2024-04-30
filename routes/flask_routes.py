@@ -11,8 +11,8 @@ from utils.render_readme import get_rendered_readme
 from utils.logger_script import logger
 from utils.yfinance_helper import get_current_prices_of_symbol_list, get_symbol_info
 
-from forms.userbase_logic import SignUpForm, SignInForm, UpdateUserForm
-from forms.stocks_logic import SymbolPickForm, TradeForm, get_locked_trade_form
+from forms.userbase import SignUpForm, SignInForm, UpdateUserForm
+from forms.stocks import SymbolPickForm, TradeForm, get_locked_trade_form
 
 from comms.communications import get_response, FastAPIRoutes
 
@@ -29,6 +29,12 @@ class InternalError(Exception):
 
 @flask_app.before_request
 def make_session_permanent():
+    """
+    Configures the Flask session to be permanent and sets the lifetime of the session.
+
+    This function runs before each request to ensure that the session remains persistent across requests,
+    and automatically expires after one day if not renewed. Additionally, it checks if the user is signed in.
+    """
     session.permanent = True
     flask_app.permanent_session_lifetime = timedelta(days=1)
 
@@ -46,8 +52,19 @@ def readme() -> str:
 
 @flask_app.route('/stock_dashboard/', methods=['GET', 'POST'])    
 @flask_app.route('/stock_dashboard/<symbol>', methods=['GET', 'POST'])
-# @sign_in_required()
 def stock_dashboard(symbol: str = None):
+    """
+    Handles the stock dashboard display and interaction. If no symbol is specified,
+    it redirects to a default symbol's dashboard, and if the user is not signed in 
+    renders a template without the tradeform.
+    The endpoint supports both GET and POST requests for fetching stock information 
+    and handling trades respectively.
+
+    Args:
+        symbol (str, optional): The stock symbol to display. Defaults to 'AAPL' if None.
+    Returns:
+        Rendered stock dashboard page or a redirect response.
+    """
     if symbol is None:
         return redirect(f"{url_for('stock_dashboard')}/AAPL")
     
@@ -140,6 +157,16 @@ def stock_dashboard(symbol: str = None):
 @flask_app.route('/my/portfolio/<symbol>', methods=['GET'])    
 @sign_in_required()
 def portfolio(symbol: str = None):
+    """
+    Retrieves and displays the user's portfolio. If a specific symbol is provided,
+    it redirects to a template with the summary of the symbol, if not it renders 
+    it displays the entire portfolio.
+
+    Args:
+        symbol (str, optional): Specific stock symbol to display detailed transactions.
+    Returns:
+        Rendered portfolio page for all stocks or a specific stock.
+    """
     if symbol is not None:
         symbol = symbol.upper()
     response = get_response(endpoint=FastAPIRoutes.get_portfolio.value, method="get")
@@ -167,7 +194,7 @@ def portfolio(symbol: str = None):
                 worths_graph.change_page_layout(total_worths)
 
                 return render_template(
-                    "users/portfolio.html",
+                    "stocks/portfolio.html",
                     balance=response["data"]["balance"],
                     symbols=response["data"]["symbols"],
                     total_shares=total_shares,
@@ -175,7 +202,7 @@ def portfolio(symbol: str = None):
                 )
             elif symbol in response["data"]["symbols"]:
                 return render_template(
-                    "users/stock.html",
+                    "stocks/stock_summary.html",
                     balance=response["data"]["balance"],
                     symbol=symbol,
                     transactions=response["data"]["symbols"][symbol],
@@ -190,7 +217,7 @@ def portfolio(symbol: str = None):
     except InternalError:
         logger.debug(f"Communication between servers has failed: {response["internal_error"]}")
         return render_template(
-            "users/portfolio.html",
+            "stocks/portfolio.html",
             balance=0,
             symbols=None
         )
@@ -204,6 +231,16 @@ def portfolio(symbol: str = None):
 
 @flask_app.route('/my/database/<database_name>', methods=["GET"])
 def view_database(database_name: str):
+    """
+    Provides a view of a specified database (either 'transactions' or 'portfolios' 
+    for security reasons).
+    Redirects to an access denied page if the database name is not valid.
+
+    Args:
+        database_name (str): The name of the database to view.
+    Returns:
+        Rendered view of the database or a redirection to an access denied page.
+    """
     if database_name not in ["transactions", "portfolios"]:
         return redirect_to_access_denied(reason="Invalid Database Name")
     else:        
@@ -214,7 +251,7 @@ def view_database(database_name: str):
             if response["success"] is True:
                 logger.info(f"Outputting {database_name} database to html...")
                 return render_template(
-                    "users/view_database.html", 
+                    "misc/view_database.html", 
                     database_name=database_name.capitalize(),
                     records=response["data"]
                 )
@@ -241,6 +278,14 @@ def profile():
 # Fully Complete
 @flask_app.route("/sign_in", methods=["GET", "POST"])
 def sign_in() -> str:
+    """
+    Handles user sign-in functionality. It displays the sign-in form and processes the sign-in requests.
+    If the user is already signed in, it redirects to an access denied page.
+    Any error messages or other feedbacks from the FastAPI server will be rendered in the Jinja template.
+
+    Returns:
+        Rendered sign-in page or a redirection.
+    """
     if _signed_in():
         return redirect_to_access_denied(reason="You are already signed in")
     
@@ -298,9 +343,33 @@ def sign_in() -> str:
         redirect_profile=redirect_profile
     )
 
+@flask_app.route('/sign_out')
+@sign_in_required()
+def sign_out():
+    """
+    Handles user sign-out by clearing all session data and redirecting to the index page.
+
+    Returns:
+        Redirection to the index page after successful sign-out.
+    """
+    session.pop("username", None)
+    session.pop("password", None)
+    session.pop("uuid", None)
+    session.pop("email", None)
+
+    return redirect(url_for("index"))
+
 # Fully Complete
 @flask_app.route("/sign_up", methods=["GET", "POST"])
 def sign_up():
+    """
+    Manages the user registration process. Processes the registration requests.
+    If the registration is successful, it may redirect to the home page, if not, 
+    it will pass an error to the Jinja template.
+
+    Returns:
+        Rendered sign-up page or a redirection to the home page upon successful registration.
+    """
     sign_up_form = SignUpForm()
     feedback = None
     keep_form_data = True
@@ -351,19 +420,16 @@ def sign_up():
         redirect_home=redirect_home
     )
 
-@flask_app.route('/sign_out')
-@sign_in_required()
-def sign_out():
-    session.pop("username", None)
-    session.pop("password", None)
-    session.pop("uuid", None)
-    session.pop("email", None)
-
-    return redirect(url_for("index"))
-
 # Fully Complete
 @flask_app.route('/update_user', methods=['GET', 'POST'])
 def update_user():
+    """
+    Provides functionality for users to update their account details. Displays the update form
+    and processes update requests.
+    
+    Returns:
+        Rendered update page with feedback on the update process.
+    """
     update_form = UpdateUserForm()
     feedback = None
     keep_form_data = True

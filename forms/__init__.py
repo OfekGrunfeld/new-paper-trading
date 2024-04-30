@@ -1,2 +1,2 @@
-__all__: list[str] = ["userbase_logic", "stocks_logic"]
+__all__: list[str] = ["userbase", "stocks"]
 from . import *

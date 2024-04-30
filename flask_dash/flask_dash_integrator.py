@@ -1,17 +1,20 @@
-import dash
+from typing import override
+
+from dash import Dash
 from flask import render_template
 from markupsafe import Markup
 
-class FlaskDash(dash.Dash):
+class FlaskDash(Dash):
+    @override
     def interpolate_index(
         self,
         metas="",
-        title="",  # noqa: ARG002
+        title="", 
         css="",
         config="",
         scripts="",
         app_entry="",
-        favicon="",  # noqa: ARG002
+        favicon="",
         renderer="",
     ) -> str:
         """
@@ -21,7 +24,7 @@ class FlaskDash(dash.Dash):
         # markupsafe.Markup is used to prevent Jinja from
         # escaping the Dash-rendered markup
         return render_template(
-            "dash.html",
+            "misc/dash.html",
             metas=Markup(metas),
             css=Markup(css),
             # config is mapped to dash_config

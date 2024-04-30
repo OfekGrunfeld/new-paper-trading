@@ -14,7 +14,6 @@ def create_app():
 
         # Flask Routes
         from routes import flask_routes
-        from routes import flask_routes_helper
         from routes import admin
 
         # Jinja templates
@@ -29,7 +28,6 @@ def run_flask():
     flask_app.run(
         host="0.0.0.0", 
         port=flask_port, 
-        ssl_context=("./https/cert.pem", "./https/key.pem")
     )
 
 if __name__ == "__main__":

@@ -4,11 +4,18 @@ import yfinance as yf
 
 from utils.logger_script import logger
 
-
 def get_symbol_info(symbol: str) -> Union[dict, None]:
     """
-    Get yfinance's "info" for a symbol. Returns a dict if valid for most symbols, 
-    sometimes the dictionary will be invalid and an error should pop up.
+    Retrieves detailed financial information about a given symbol using yfinance's info attribute.
+
+    Parameters:
+        symbol (str): The stock symbol to retrieve information for.
+
+    Returns:
+        Union[dict, None]: A dictionary containing financial details about the symbol if successful, None otherwise.
+    
+    Notes:
+        - This function might return an empty dictionary as a special case where a symbol doesn't exist.
     """
     if symbol is None:
         logger.error(f"Entered symbol is None")
@@ -25,6 +32,19 @@ def get_symbol_info(symbol: str) -> Union[dict, None]:
         return None
 
 def get_current_prices_of_symbol_list(symbols: list[str]) -> dict[str, float]:
+    """
+    Retrieves the current price for a list of stock symbols.
+
+    Parameters:
+        symbols (list[str]): A list of stock symbols to retrieve current prices for.
+
+    Returns:
+        dict[str, Union[float, None]]: A dictionary mapping each symbol to its current price or None if an error occurred.
+    
+    Notes:
+        - If an error occurs during fetching, the value for that symbol is set to None.
+    """
+    
     values = []
     for symbol in symbols:
         try:
@@ -41,12 +61,3 @@ def get_current_prices_of_symbol_list(symbols: list[str]) -> dict[str, float]:
             
     return dict(zip(symbols,values))
 
-
-
-def func():
-    info = yf.Ticker("aapl").info["currentPrice"]
-    print(info)
-
-
-if __name__ == "__main__":
-    func()

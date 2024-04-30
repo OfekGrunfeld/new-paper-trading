@@ -6,7 +6,9 @@ from werkzeug.utils import import_string
 
 @flask_app.route('/routes', methods=['GET'])
 def routes_info():
-    """Print all defined routes and their endpoint docstrings only when in debug mode."""
+    """
+    Print all defined routes and their endpoint docstrings only when in debug mode.
+    """
     if not flask_app.config.get('DEBUG', False):
         # Abort with a 403 Forbidden if not in debug mode
         abort(403, description="Access denied: Route information is available only in debug mode.")

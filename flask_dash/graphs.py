@@ -4,23 +4,34 @@ from plotly import express as px
 
 from .flask_dash_integrator import FlaskDash
 
-
 class GraphCreator:
+    """
+    Used for organizing graph/chart creation functions.
+    """
     @staticmethod
-    def create_chart_pie(data: dict = None):
+    def create_chart_pie(data_to_display: dict = None):
         """
-        Create the layout for this page, including a pie chart based on a dictionary.
-        
+        Generates a pie chart using provided data.
+
+        This method uses Plotly Express to create a pie chart visualization which is then
+        placed into a Dash Bootstrap Container. If no data is provided, it uses a default
+        set of values.
+
         Parameters:
-            data (dict): A dictionary
+            data (dict, optional): A dictionary where keys represent the categories and
+                                values represent the numeric values for those categories.
+
+        Returns:
+            dbc.Container: A Dash Bootstrap Container component that includes the generated pie chart.
         """
-        if data is None:
-            data = {"This": 1, "is": 2, "a": 3, "default": 4, "value": 5}
+
+        if data_to_display is None:
+            data_to_display = {"This": 1, "is": 2, "a": 3, "default": 4, "value": 5}
             
         # Create a pie chart using Plotly Express
         fig = px.pie(
-            names=list(data.keys()), 
-            values=list(data.values()), 
+            names=list(data_to_display.keys()), 
+            values=list(data_to_display.values()), 
         )
 
         page_layout = dbc.Container(

@@ -1,3 +1,4 @@
+from typing import Union
 import os
 from base64 import b64encode, b64decode
 import json
@@ -29,16 +30,23 @@ def pad_binary_data(binary_data: bytes) -> bytes:
     except Exception as error:
         logger.error(f"Error padding data. Error: {error}")
 
-
-def encrypt(data) -> str:
+def encrypt(data: Union[str, dict]) -> str:
     """
-    Encrypt the binary data using AES-CBC.
+    Encrypts given data using AES encryption in CBC mode with a dynamically generated initialization vector.
 
     Args:
-        binary_data (bytes): The binary data to be encrypted.
+        data (Union[str, dict]): The data to be encrypted. If the data is a string, it's encoded to bytes. 
+                                 If it is a dictionary, it is converted to a JSON string and then to bytes.
 
     Returns:
-        str: The encrypted data, serialized as a string.
+        str: A string composed of the base64-encoded initialization vector, the length of the original 
+             binary data, and the encrypted data. These components are concatenated with a dollar sign ('$')
+             as the delimiter, allowing for easy parsing upon decryption.
+
+    Notes:
+        The encryption key and IV are derived from predefined environmental variables and are not hard-coded 
+        within this function. The backend for the cryptographic operations is set to the default cryptographic
+        backend provided by the 'cryptography' package.
     """
     if isinstance(data, str):
         binary_data = data.encode("utf-8")

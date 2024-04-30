@@ -1,1 +1,1 @@
-__all__: list[str] = ["crossfilter_example", "flask_dash_integrator", "demo", "iris_kmeans"]
+__all__: list[str] = ["flask_dash_integrator", "graphs"]

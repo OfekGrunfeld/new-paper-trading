@@ -10,6 +10,10 @@ class SymbolPickForm(FlaskForm):
     symbol = StringField("Symbol", validators=DefaultFormValidators.symbol_pick)
 
 class TradeForm(FlaskForm):
+    """
+    The platform only allows for market orders for now, so this form is
+    supporting different order types but only market types are allowed.
+    """
     order_type = SelectField(
         "Order Type", 
         validators=[DataRequired()], 
@@ -22,15 +26,15 @@ class TradeForm(FlaskForm):
     )
     shares = FloatField(
         "Shares", 
-        validators=[DataRequired(), NumberRange(min=0, message="Please enter a valid number")]
+        validators=[DataRequired(), NumberRange(min=0, message=DefaultFormValidators.number_error_message)]
     )
     limit_price = DecimalField(
         "Limit Price", 
-        validators=[Optional(), NumberRange(min=0, message="Please enter a valid number")]
+        validators=[Optional(), NumberRange(min=0, message=DefaultFormValidators.number_error_message)]
     )
     stop_price = DecimalField(
         "Stop Price", 
-        validators=[Optional(), NumberRange(min=0, message="Please enter a valid number")]
+        validators=[Optional(), NumberRange(min=0, message=DefaultFormValidators.number_error_message)]
     )
     time_in_force = SelectField(
         "Time in Force", 
